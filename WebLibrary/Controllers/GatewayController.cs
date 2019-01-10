@@ -8,7 +8,7 @@ namespace WebLibrary.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class BooksController : ControllerBase
+    public class GatewayController : ControllerBase
     {
         // GET api/values
         [HttpGet]
