@@ -14,7 +14,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\WebLibrary\Gateway.csproj" />
+    <ProjectReference Include="..\Gateway\Gateway.csproj" />
   </ItemGroup>
 
 </Project>
