@@ -3,17 +3,26 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Logging; 
 
 namespace BookService.Controllers
 {
-    [Route("api/[controller]")]
+    [Route("book")]
     [ApiController]
-    public class ValuesController : ControllerBase
+    public class BookController : ControllerBase
     {
+        private readonly ILogger<BookController> _logger; 
+
+        public BookController(ILogger<BookController> nLogger)
+        {
+            _logger = nLogger;
+        }
+
         // GET api/values
         [HttpGet]
         public ActionResult<IEnumerable<string>> Get()
         {
+            _logger.LogInformation("Get all"); 
             return new string[] { "value1", "value2" };
         }
 
@@ -21,6 +30,7 @@ namespace BookService.Controllers
         [HttpGet("{id}")]
         public ActionResult<string> Get(int id)
         {
+            _logger.LogInformation("Get"); 
             return "value";
         }
 

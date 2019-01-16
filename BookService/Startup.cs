@@ -12,7 +12,8 @@ using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using System.Diagnostics.CodeAnalysis;
 using Microsoft.EntityFrameworkCore; 
-using BookService.Models; 
+using BookService.Models;
+using System.Net;
 
 namespace BookService
 {
@@ -28,7 +29,7 @@ namespace BookService
 
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
-        {
+        {            
             services.AddDbContext<BooksContext>(options => options.UseSqlServer(Configuration.GetConnectionString("ConnectionDB"))); 
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
         }
@@ -39,13 +40,8 @@ namespace BookService
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
-            }
-            else
-            {
-                app.UseHsts();
-            }
+            }            
 
-            app.UseHttpsRedirection();
             app.UseMvc();
         }
     }
