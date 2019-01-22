@@ -12,5 +12,6 @@ namespace BookService.Models
         public BooksContext(DbContextOptions<BooksContext> options)
             : base(options)
         { }
+
     }
 }

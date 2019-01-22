@@ -3,53 +3,98 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Logging; 
+using Microsoft.Extensions.Logging;
+using BookService.Models; 
 
 namespace BookService.Controllers
 {
-    [Route("book")]
+    [Route("")]
     [ApiController]
     public class BookController : ControllerBase
     {
+        private BooksContext database; 
         private readonly ILogger<BookController> _logger; 
 
-        public BookController(ILogger<BookController> nLogger)
+        public BookController(BooksContext nDatabase, ILogger<BookController> nLogger)
         {
             _logger = nLogger;
+            database = nDatabase; 
         }
 
         // GET api/values
         [HttpGet]
-        public ActionResult<IEnumerable<string>> Get()
+        public async Task<ActionResult<IEnumerable<Book>>> Get()
         {
-            _logger.LogInformation("Get all"); 
-            return new string[] { "value1", "value2" };
+            _logger.LogInformation("Get all books");
+            ActionResult<IEnumerable<Book>> result; 
+            try
+            {
+                if (database.Books.Any())
+                    result = database.Books;
+                else
+                    result = NoContent(); 
+            }
+            catch
+            {
+                result = StatusCode(500); 
+            }
+            
+            return result;
         }
 
-        // GET api/values/5
-        [HttpGet("{id}")]
-        public ActionResult<string> Get(int id)
+        // GET /?Name=name
+        [HttpGet("{Name}")]
+        public async Task<ActionResult<Book>> Get(string Name)
         {
-            _logger.LogInformation("Get"); 
-            return "value";
+            _logger.LogInformation($"Get book with name: {Name}");
+            ActionResult<Book> result = BadRequest();
+            try
+            {
+                var list = database.Books.Where(book => book.Name == Name);
+                if (list.Any())
+                    result = list.First();
+            }
+            catch
+            {
+                result = StatusCode(500); 
+            }                      
+            return result; 
         }
 
         // POST api/values
         [HttpPost]
-        public void Post([FromBody] string value)
+        public async Task<IActionResult> Post(string Name, int Year)
         {
-        }
-
-        // PUT api/values/5
-        [HttpPut("{id}")]
-        public void Put(int id, [FromBody] string value)
-        {
+            _logger.LogInformation($"Add book: {Name}, {Year}");
+            ActionResult result = Ok(); 
+            try
+            {
+                var Book = new Book { Name = Name, Year = Year };
+                database.Books.Add(Book);
+                database.SaveChanges();
+            }
+            catch
+            {
+                result = StatusCode(500); 
+            }            
+            return result; 
         }
 
         // DELETE api/values/5
         [HttpDelete("{id}")]
         public void Delete(int id)
         {
+
         }
+
+        /*
+        // PUT api/values/5
+        [HttpPut("{id}")]
+        public void Put(int id, [FromBody] string value)
+        {
+        }
+
+        
+        */
     }
 }

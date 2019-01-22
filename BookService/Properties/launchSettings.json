@@ -12,7 +12,7 @@
     "IIS Express": {
       "commandName": "IISExpress",
       "launchBrowser": true,
-      "launchUrl": "book",
+      "launchUrl": "",
       "environmentVariables": {
         "ASPNETCORE_ENVIRONMENT": "Development"
       },
@@ -21,7 +21,7 @@
     "BookService": {
       "commandName": "Project",
       "launchBrowser": true,
-      "launchUrl": "book",
+      "launchUrl": "",
       "applicationUrl": "http://localhost:58492",
       "environmentVariables": {
         "ASPNETCORE_ENVIRONMENT": "Development"
