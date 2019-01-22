@@ -36,6 +36,7 @@ namespace BookService.Controllers
             }
             catch
             {
+                _logger.LogError("Problem with database while getting");
                 result = StatusCode(500); 
             }
             
@@ -56,12 +57,13 @@ namespace BookService.Controllers
             }
             catch
             {
+                _logger.LogError("Problem with database while getting");
                 result = StatusCode(500); 
             }                      
             return result; 
         }
 
-        // POST api/values
+        // POST /?Name=name&Year=year
         [HttpPost]
         public async Task<IActionResult> Post(string Name, int Year)
         {
@@ -72,19 +74,22 @@ namespace BookService.Controllers
                 var Book = new Book { Name = Name, Year = Year };
                 database.Books.Add(Book);
                 database.SaveChanges();
+                _logger.LogInformation("Succesful adding"); 
             }
             catch
             {
+                _logger.LogError("Problem with database while adding"); 
                 result = StatusCode(500); 
             }            
             return result; 
         }
 
-        // DELETE api/values/5
-        [HttpDelete("{id}")]
-        public void Delete(int id)
+        // DELETE /Name
+        [HttpDelete("{Name}")]
+        public async Task<ActionResult> Delete(string Name)
         {
-
+            _logger.LogInformation($"Delete book: {Name}");
+            return Ok(); 
         }
 
         /*
