@@ -19,5 +19,11 @@ namespace Gateway.Services.Implementation
             var response = await Get("");
             return JsonConvert.DeserializeObject<List<Book>>(await response.Content.ReadAsStringAsync()); 
         }
+
+        public async Task<Book> GetBook(string Name)
+        {
+            var response = await Get(Name);
+            return JsonConvert.DeserializeObject<Book>(await response.Content.ReadAsStringAsync()); 
+        }
     }
 }

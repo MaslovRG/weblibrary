@@ -10,8 +10,8 @@ namespace Gateway.Services
     public interface IBookService
     {
         Task<List<Book>> GetBooks();
-        /*Task<Tuple<string, int, string>> GetBook(string Name); 
-        Task<HttpResponseMessage> AddBook(string Name, int Year, string Author);
+        Task<Book> GetBook(string Name); 
+        /*Task<HttpResponseMessage> AddBook(string Name, int Year, string Author);
         Task<HttpResponseMessage> DeleteBook(string Name); */
     }
 }

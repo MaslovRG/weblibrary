@@ -28,21 +28,19 @@ namespace Gateway.Controllers
         [HttpGet]
         public async Task<ActionResult<List<Book>>> Get()
         {
-            List<Book> books = await bookService.GetBooks();
-            ActionResult<List<Book>> result = books; 
-            return result;
+            return await bookService.GetBooks();
         }
 
         // GET: book/Name
         [HttpGet("{Name}")]
-        public string Get(string Name)
+        public async Task<ActionResult<Book>> Get(string Name)
         {
-            return "value";
+            return await bookService.GetBook(Name);
         }
 
         // POST: api/Book
         [HttpPost]
-        public void Post(string Name, int Year)
+        public void Post(string Name, int Year, string Author)
         {
 
         }
