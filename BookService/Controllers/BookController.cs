@@ -63,15 +63,15 @@ namespace BookService.Controllers
             return result; 
         }
 
-        // POST /?Name=name&Year=year
+        // POST /?Name=name&Year=year&Author=author
         [HttpPost]
-        public async Task<IActionResult> Post(string Name, int Year)
+        public async Task<ActionResult> Post(string Name, int Year, string Author)
         {
-            _logger.LogInformation($"Add book: {Name}, {Year}");
+            _logger.LogInformation($"Add book: {Name}, {Year}, {Author}");
             ActionResult result = Ok(); 
             try
             {
-                var Book = new Book { Name = Name, Year = Year };
+                var Book = new Book { Name = Name, Year = Year, Author = Author };
                 database.Books.Add(Book);
                 database.SaveChanges();
                 _logger.LogInformation("Succesful adding"); 
@@ -88,8 +88,21 @@ namespace BookService.Controllers
         [HttpDelete("{Name}")]
         public async Task<ActionResult> Delete(string Name)
         {
-            _logger.LogInformation($"Delete book: {Name}");
-            return Ok(); 
+            _logger.LogInformation($"Delete book with id: {Name}");
+            ActionResult result = Ok();
+            try
+            {
+                var deleteList = database.Books.Where(book => book.Name == Name);
+                if (deleteList.Any())
+                    database.Books.RemoveRange(deleteList);                  
+            }
+            catch
+            {
+                _logger.LogError("Problem with database while deleting");
+                result = StatusCode(500); 
+            }
+
+            return result; 
         }
 
         /*
@@ -97,9 +110,7 @@ namespace BookService.Controllers
         [HttpPut("{id}")]
         public void Put(int id, [FromBody] string value)
         {
-        }
-
-        
+        }        
         */
     }
 }

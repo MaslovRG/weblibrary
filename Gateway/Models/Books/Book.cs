@@ -2,14 +2,11 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using Newtonsoft.Json; 
 
-namespace BookService.Models
+namespace Gateway.Models.Books
 {
     public class Book
     {
-        [JsonIgnore]
-        public int Id { get; set; }
         public string Name { get; set; }
         public int Year { get; set; }
         public string Author { get; set; }
