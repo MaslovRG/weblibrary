@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using System.Net.Http; 
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging; 
@@ -26,9 +27,11 @@ namespace Gateway.Controllers
 
         // GET: book
         [HttpGet]
-        public async Task<ActionResult<List<Book>>> Get()
+        public async Task<ActionResult<List<Book>>> Get(int? page, int? size)
         {
             return await bookService.GetBooks();
+            /*var paginatedList = new Pa
+            return null;*/ 
         }
 
         // GET: book/Name
@@ -40,16 +43,16 @@ namespace Gateway.Controllers
 
         // POST: api/Book
         [HttpPost]
-        public void Post(string Name, int Year, string Author)
+        public async void Post([FromBody] Book book)
         {
-
+            await bookService.AddBook(book); 
         }
 
         // DELETE: api/ApiWithActions/5
-        [HttpDelete("{id}")]
-        public void Delete(int id)
+        [HttpDelete("{Name}")]
+        public async void Delete(string Name)
         {
-
+            await bookService.DeleteBook(Name);  
         }
         
         /*

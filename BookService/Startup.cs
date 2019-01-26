@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Net;
+using System.Net.Http.Formatting;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -13,7 +15,6 @@ using Microsoft.Extensions.Options;
 using System.Diagnostics.CodeAnalysis;
 using Microsoft.EntityFrameworkCore; 
 using BookService.Models;
-using System.Net;
 
 namespace BookService
 {
@@ -33,7 +34,9 @@ namespace BookService
             services.AddDbContext<BooksContext>(options =>
                 //options.UseSqlServer(Configuration.GetConnectionString("ConnectionDB"))); 
                 options.UseInMemoryDatabase("Book")); 
-            services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
+            services.AddMvc()
+                .SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
+            
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

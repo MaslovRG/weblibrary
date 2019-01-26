@@ -5,7 +5,8 @@ using System.Threading.Tasks;
 using System.Net.Http;
 using Microsoft.Extensions.Configuration;
 using Newtonsoft.Json;
-using Gateway.Models.Books; 
+using Gateway.Models.Books;
+using Gateway.Services;
 
 namespace Gateway.Services.Implementation
 {
@@ -24,6 +25,16 @@ namespace Gateway.Services.Implementation
         {
             var response = await Get(Name);
             return JsonConvert.DeserializeObject<Book>(await response.Content.ReadAsStringAsync()); 
+        }
+
+        public async Task<HttpResponseMessage> AddBook(Book book)
+        {
+            return await PostJson("", book); 
+        }
+
+        public async Task<HttpResponseMessage> DeleteBook(string Name)
+        {
+            return await Delete(Name); 
         }
     }
 }

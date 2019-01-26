@@ -65,13 +65,13 @@ namespace BookService.Controllers
 
         // POST /?Name=name&Year=year&Author=author
         [HttpPost]
-        public async Task<ActionResult> Post(string Name, int Year, string Author)
+        public async Task<ActionResult> Post([FromBody]Book book)
         {
-            _logger.LogInformation($"Add book: {Name}, {Year}, {Author}");
+            _logger.LogInformation($"Add book: {book.Name}, {book.Year}, {book.Author}");
             ActionResult result = Ok(); 
             try
             {
-                var Book = new Book { Name = Name, Year = Year, Author = Author };
+                var Book = new Book { Name = book.Name, Year = book.Year, Author = book.Author };
                 database.Books.Add(Book);
                 database.SaveChanges();
                 _logger.LogInformation("Succesful adding"); 
@@ -94,7 +94,8 @@ namespace BookService.Controllers
             {
                 var deleteList = database.Books.Where(book => book.Name == Name);
                 if (deleteList.Any())
-                    database.Books.RemoveRange(deleteList);                  
+                    database.Books.RemoveRange(deleteList);
+                database.SaveChanges(); 
             }
             catch
             {
