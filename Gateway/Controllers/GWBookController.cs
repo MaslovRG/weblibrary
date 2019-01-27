@@ -7,7 +7,8 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging; 
 using Gateway.Services;
-using Gateway.Models.Books; 
+using Gateway.Models.Books;
+using PagedList;
 
 namespace Gateway.Controllers
 {
@@ -27,11 +28,18 @@ namespace Gateway.Controllers
 
         // GET: book
         [HttpGet]
-        public async Task<ActionResult<List<Book>>> Get(int? page, int? size)
+        public async Task<ActionResult<PagedList<Book>>> Get(int? page, int? size)
         {
-            return await bookService.GetBooks();
-            /*var paginatedList = new Pa
-            return null;*/ 
+            var books = await bookService.GetBooks();
+            ActionResult<PagedList<Book>> result = NoContent(); 
+            if (books != null)
+            {
+                if (page != null && page > 0 && size != null && size > 0)                    
+                    result = (PagedList<Book>)books.ToPagedList((int)page, (int)size); 
+                else
+                    result = (PagedList<Book>)books.ToPagedList(1, books.Count);                 
+            }
+            return result; 
         }
 
         // GET: book/Name
@@ -53,14 +61,6 @@ namespace Gateway.Controllers
         public async void Delete(string Name)
         {
             await bookService.DeleteBook(Name);  
-        }
-        
-        /*
-        // PUT: api/Book/5
-        [HttpPut("{id}")]
-        public void Put(int id, [FromBody] string value)
-        {
-        }
-        */        
+        }          
     }
 }
