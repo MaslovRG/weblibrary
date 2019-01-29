@@ -27,14 +27,20 @@ namespace Gateway.Services.Implementation
             return JsonConvert.DeserializeObject<Book>(await response.Content.ReadAsStringAsync()); 
         }
 
-        public async Task<HttpResponseMessage> AddBook(Book book)
+        public async Task<HttpResponseMessage> AddBook(Book Book)
         {
-            return await PostJson("", book); 
+            return await PostJson("", Book); 
         }
 
         public async Task<HttpResponseMessage> DeleteBook(string Name)
         {
             return await Delete(Name); 
+        }
+
+        public async Task<List<Book>> GetBooksByAuthor(string Author)
+        {
+            var response = await Get("author/" + Author);
+            return JsonConvert.DeserializeObject<List<Book>>(await response.Content.ReadAsStringAsync());
         }
     }
 }

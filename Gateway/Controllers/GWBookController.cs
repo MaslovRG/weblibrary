@@ -8,6 +8,8 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging; 
 using Gateway.Services;
 using Gateway.Models.Books;
+using Gateway.Models.Authors;
+using Gateway.Models.Readers; 
 using PagedList;
 
 namespace Gateway.Controllers
@@ -18,49 +20,63 @@ namespace Gateway.Controllers
     {
         private readonly ILogger<BookController> _logger; 
         private IBookService bookService;
+        private IAuthorService authorService;
+        private IReaderService readerService;
 
         public BookController(ILogger<BookController> nLogger,
-            IBookService nBookService)
+            IBookService nBookService,
+            IAuthorService nAuthorService,
+            IReaderService nReaderService)
         {
             _logger = nLogger;
-            bookService = nBookService; 
+            bookService = nBookService;
+            authorService = nAuthorService; 
         }
 
-        // GET: book
+        // GET: book?page=1&size=5
         [HttpGet]
         public async Task<ActionResult<PagedList<Book>>> Get(int? page, int? size)
         {
             var books = await bookService.GetBooks();
-            ActionResult<PagedList<Book>> result = NoContent(); 
-            if (books != null)
-            {
-                if (page != null && page > 0 && size != null && size > 0)                    
-                    result = (PagedList<Book>)books.ToPagedList((int)page, (int)size); 
-                else
-                    result = (PagedList<Book>)books.ToPagedList(1, books.Count);                 
-            }
-            return result; 
+            return SupportingFunctions.GetPagedList(books, page, size); 
         }
 
         // GET: book/Name
         [HttpGet("{Name}")]
         public async Task<ActionResult<Book>> Get(string Name)
         {
-            return await bookService.GetBook(Name);
+            var book = await bookService.GetBook(Name);
+
+            if (book == null)
+                return NotFound();
+
+            return book; 
         }
 
-        // POST: api/Book
+        // POST: book
         [HttpPost]
-        public async void Post([FromBody] Book book)
+        public async Task<ActionResult> Post([FromBody] Book book)
         {
-            await bookService.AddBook(book); 
+            var response = await authorService.AddAuthor(new Author
+            {
+                Name = book.Author 
+            });
+            var trueBook = book;
+            if (response == null || !response.IsSuccessStatusCode)
+                trueBook.Author = null; 
+            response = await bookService.AddBook(trueBook);
+            return SupportingFunctions.GetResponseResult(response); 
         }
 
-        // DELETE: api/ApiWithActions/5
+        // DELETE: book/Name
         [HttpDelete("{Name}")]
-        public async void Delete(string Name)
+        public async Task<ActionResult> Delete(string Name)
         {
-            await bookService.DeleteBook(Name);  
+            var response = await readerService.DeleteBook(Name);
+            if (response == null || !response.IsSuccessStatusCode)
+                return StatusCode(500); 
+            response = await bookService.DeleteBook(Name);
+            return SupportingFunctions.GetResponseResult(response); 
         }          
     }
 }

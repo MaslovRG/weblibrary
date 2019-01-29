@@ -63,7 +63,7 @@ namespace BookService.Controllers
             return result; 
         }
 
-        // POST /?Name=name&Year=year&Author=author
+        // POST 
         [HttpPost]
         public async Task<ActionResult> Post([FromBody]Book book)
         {
@@ -105,13 +105,5 @@ namespace BookService.Controllers
 
             return result; 
         }
-
-        /*
-        // PUT api/values/5
-        [HttpPut("{id}")]
-        public void Put(int id, [FromBody] string value)
-        {
-        }        
-        */
     }
 }

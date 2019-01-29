@@ -12,6 +12,7 @@ namespace Gateway.Services
         Task<List<Book>> GetBooks();
         Task<Book> GetBook(string Name);
         Task<HttpResponseMessage> AddBook(Book book);
-        Task<HttpResponseMessage> DeleteBook(string Name); 
+        Task<HttpResponseMessage> DeleteBook(string Name);
+        Task<List<Book>> GetBooksByAuthor(string Author); 
     }
 }
