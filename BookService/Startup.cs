@@ -34,6 +34,7 @@ namespace BookService
             services.AddDbContext<BooksContext>(options =>
                 //options.UseSqlServer(Configuration.GetConnectionString("ConnectionDB"))); 
                 options.UseInMemoryDatabase("Book")); 
+
             services.AddMvc()
                 .SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
             

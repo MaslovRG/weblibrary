@@ -23,7 +23,7 @@ namespace BookService.Controllers
 
         // GET api/values
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<Book>>> Get()
+        public ActionResult<IEnumerable<Book>> Get()
         {
             _logger.LogInformation("Get all books");
             ActionResult<IEnumerable<Book>> result; 
@@ -43,9 +43,9 @@ namespace BookService.Controllers
             return result;
         }
 
-        // GET /?Name=name
+        // GET /Name
         [HttpGet("{Name}")]
-        public async Task<ActionResult<Book>> Get(string Name)
+        public ActionResult<Book> Get(string Name)
         {
             _logger.LogInformation($"Get book with name: {Name}");
             ActionResult<Book> result = BadRequest();
@@ -63,9 +63,9 @@ namespace BookService.Controllers
             return result; 
         }
 
-        // POST 
+        // POST /
         [HttpPost]
-        public async Task<ActionResult> Post([FromBody]Book book)
+        public ActionResult Post([FromBody]Book book)
         {
             _logger.LogInformation($"Add book: {book.Name}, {book.Year}, {book.Author}");
             ActionResult result = Ok(); 
@@ -86,7 +86,7 @@ namespace BookService.Controllers
 
         // DELETE /Name
         [HttpDelete("{Name}")]
-        public async Task<ActionResult> Delete(string Name)
+        public ActionResult Delete(string Name)
         {
             _logger.LogInformation($"Delete book with id: {Name}");
             ActionResult result = Ok();

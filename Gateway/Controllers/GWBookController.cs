@@ -30,7 +30,8 @@ namespace Gateway.Controllers
         {
             _logger = nLogger;
             bookService = nBookService;
-            authorService = nAuthorService; 
+            authorService = nAuthorService;
+            readerService = nReaderService; 
         }
 
         // GET: book?page=1&size=5
