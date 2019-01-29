@@ -79,5 +79,13 @@ namespace Gateway.Controllers
             response = await bookService.DeleteBook(Name);
             return SupportingFunctions.GetResponseResult(response); 
         }          
+
+        // GET: book/author/Name
+        [HttpGet("author/{Name}")]
+        public async Task<ActionResult<PagedList<Book>>> GetAuthor(string Name, int? page, int? size)
+        {
+            var books = await bookService.GetBooksByAuthor(Name);
+            return SupportingFunctions.GetPagedList(books, page, size); 
+        }
     }
 }

@@ -105,5 +105,27 @@ namespace BookService.Controllers
 
             return result; 
         }
+
+        // GET: /author/{Name}
+        [HttpGet("author/{Name}")]
+        public ActionResult<IEnumerable<Book>> GetBooksByAuthor(string Name)
+        {
+            _logger.LogInformation($"Get books with author: {Name}");
+            ActionResult<IEnumerable<Book>> result = BadRequest();
+            try
+            {
+                var list = database.Books.Where(book => book.Author == Name);
+                if (list.Any())
+                    result = list.ToList(); 
+                else
+                    result = NoContent(); 
+            }
+            catch
+            {
+                _logger.LogError("Problem with database while getting");
+                result = StatusCode(500);
+            }
+            return result;
+        }
     }
 }
