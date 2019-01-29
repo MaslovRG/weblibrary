@@ -19,13 +19,13 @@ namespace Gateway.Services.Implementation
         public async Task<List<Reader>> GetReaders()
         {
             var response = await Get("");
-            return JsonConvert.DeserializeObject<List<Reader>>(await response.Content.ReadAsStringAsync());
+            return await GetObjectOrNullFromJson<List<Reader>>(response);
         }
 
         public async Task<Reader> GetReader(string Nickname)
         {
             var response = await Get(Nickname);
-            return JsonConvert.DeserializeObject<Reader>(await response.Content.ReadAsStringAsync());
+            return await GetObjectOrNullFromJson<Reader>(response);
         }
 
         public async Task<HttpResponseMessage> AddReader(string Nickname)
@@ -36,7 +36,7 @@ namespace Gateway.Services.Implementation
         public async Task<List<string>> GetReaderBooks(string Nickname)
         {
             var response = await Get("books/" + Nickname);
-            return JsonConvert.DeserializeObject<List<string>>(await response.Content.ReadAsStringAsync()); 
+            return await GetObjectOrNullFromJson<List<string>>(response);
         }
 
         public async Task<HttpResponseMessage> DeleteBook(string Name)

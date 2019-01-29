@@ -20,8 +20,10 @@ namespace Gateway.Controllers
 
         public static ActionResult<PagedList<T>> GetPagedList<T>(List<T> list, int? page, int? size)
         {
+            if (list == null)
+                return new StatusCodeResult(500); 
             ActionResult<PagedList<T>> result = new StatusCodeResult(204);
-            if (list != null && list.Count != 0)
+            if (list.Count != 0)
             {
                 if (page != null && page > 0 && size != null && size > 0)
                     result = (PagedList<T>)list.ToPagedList((int)page, (int)size);

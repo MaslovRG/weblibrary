@@ -18,13 +18,13 @@ namespace Gateway.Services.Implementation
         public async Task<List<Author>> GetAuthors()
         {
             var response = await Get("");
-            return JsonConvert.DeserializeObject<List<Author>>(await response.Content.ReadAsStringAsync()); 
+            return await GetObjectOrNullFromJson<List<Author>>(response);  
         }
 
         public async Task<Author> GetAuthor(string Name)
         {
             var response = await Get(Name);
-            return JsonConvert.DeserializeObject<Author>(await response.Content.ReadAsStringAsync()); 
+            return await GetObjectOrNullFromJson<Author>(response);
         }
 
         public async Task<HttpResponseMessage> AddAuthor(Author Author)

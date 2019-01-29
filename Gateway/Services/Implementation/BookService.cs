@@ -18,13 +18,13 @@ namespace Gateway.Services.Implementation
         public async Task<List<Book>> GetBooks()
         {
             var response = await Get("");
-            return JsonConvert.DeserializeObject<List<Book>>(await response.Content.ReadAsStringAsync()); 
+            return await GetObjectOrNullFromJson<List<Book>>(response);
         }
 
         public async Task<Book> GetBook(string Name)
         {
             var response = await Get(Name);
-            return JsonConvert.DeserializeObject<Book>(await response.Content.ReadAsStringAsync()); 
+            return await GetObjectOrNullFromJson<Book>(response);
         }
 
         public async Task<HttpResponseMessage> AddBook(Book Book)
@@ -40,7 +40,7 @@ namespace Gateway.Services.Implementation
         public async Task<List<Book>> GetBooksByAuthor(string Author)
         {
             var response = await Get("author/" + Author);
-            return JsonConvert.DeserializeObject<List<Book>>(await response.Content.ReadAsStringAsync());
+            return await GetObjectOrNullFromJson<List<Book>>(response);
         }
     }
 }

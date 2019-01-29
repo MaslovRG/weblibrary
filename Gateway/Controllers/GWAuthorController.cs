@@ -30,15 +30,7 @@ namespace Gateway.Controllers
         public async Task<ActionResult<PagedList<Author>>> Get(int? page, int? size)
         {
             var authors = await authorService.GetAuthors();
-            ActionResult<PagedList<Author>> result = NoContent();
-            if (authors != null)
-            {
-                if (page != null && page > 0 && size != null && size > 0)
-                    result = (PagedList<Author>)authors.ToPagedList((int)page, (int)size);
-                else
-                    result = (PagedList<Author>)authors.ToPagedList(1, authors.Count);
-            }
-            return result;
+            return SupportingFunctions.GetPagedList(authors, page, size); 
         }
 
         // GET: author/Name

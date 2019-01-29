@@ -66,5 +66,17 @@ namespace Gateway.Services
                 }
             }
         }
+
+        protected async Task<T> GetObjectOrNullFromJson<T>(HttpResponseMessage response)
+        {
+            try
+            {
+                return JsonConvert.DeserializeObject<T>(await response.Content.ReadAsStringAsync());
+            }
+            catch
+            {
+                return default(T);
+            }
+        }
     }
 }
