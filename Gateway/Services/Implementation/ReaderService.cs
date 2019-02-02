@@ -35,23 +35,23 @@ namespace Gateway.Services.Implementation
 
         public async Task<List<string>> GetReaderBooks(string Nickname)
         {
-            var response = await Get("books/" + Nickname);
+            var response = await Get($"{Nickname}/books");
             return await GetObjectOrNullFromJson<List<string>>(response);
         }
 
         public async Task<HttpResponseMessage> DeleteBook(string Name)
         {
-            return await Delete("book/" + Name); 
+            return await Delete($"book/{Name}"); 
         }
 
         public async Task<HttpResponseMessage> AddBookToReader(string Nickname, string Name)
         {
-            return await PostJson($"book/{Nickname}", Name); 
+            return await PostJson($"{Nickname}/book", Name); 
         }
 
         public async Task<HttpResponseMessage> DeleteBookFromReader(string Nickname, string Name)
         {
-            return await Delete($"book/{Nickname}/{Name}");
+            return await Delete($"{Nickname}/book/{Name}");
         }
     }
 }

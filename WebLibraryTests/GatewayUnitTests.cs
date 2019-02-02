@@ -22,7 +22,6 @@ namespace WebLibraryTests
             Assert.AreEqual("value2", rl.Current); */
             Assert.AreEqual(1, 1); 
         }
+        //[TestMethod]
     }
-
-
 }

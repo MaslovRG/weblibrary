@@ -39,7 +39,7 @@ namespace Gateway.Services.Implementation
 
         public async Task<List<Book>> GetBooksByAuthor(string Author)
         {
-            var response = await Get("author/" + Author);
+            var response = await Get($"author/{Author}");
             return await GetObjectOrNullFromJson<List<Book>>(response);
         }
     }

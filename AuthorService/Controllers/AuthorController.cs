@@ -51,7 +51,7 @@ namespace AuthorService.Controllers
             ActionResult<Author> result = BadRequest();
             try
             {
-                var list = database.Authors.Where(book => book.Name == Name);
+                var list = database.Authors.Where(author => author.Name == Name);
                 if (list.Any())
                     result = list.First();
             }
