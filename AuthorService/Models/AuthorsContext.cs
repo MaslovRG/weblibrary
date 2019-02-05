@@ -16,8 +16,6 @@ namespace AuthorService.Models
         { }
         
         public AuthorsContext()
-        {
-
-        }
+        { }
     }
 }

@@ -2,10 +2,12 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using Microsoft.EntityFrameworkCore; 
+using Microsoft.EntityFrameworkCore;
+using System.Diagnostics.CodeAnalysis; 
 
 namespace BookService.Models
 {
+    [ExcludeFromCodeCoverage]
     public class BooksContext : DbContext
     {
         public DbSet<Book> Books { get; set; }
@@ -13,5 +15,7 @@ namespace BookService.Models
             : base(options)
         { }
 
+        public BooksContext()
+        { }
     }
 }
