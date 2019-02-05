@@ -6,12 +6,17 @@ MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Gateway", "Gateway\Gateway.csproj", "{A7A68DB7-78D9-4B13-9090-E1D59413AAAF}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "WebLibraryTests", "WebLibraryTests\WebLibraryTests.csproj", "{FD0A4C00-EEBC-4167-8711-197E27267D77}"
+	ProjectSection(ProjectDependencies) = postProject
+		{090CF0AE-6E2A-49A4-A192-C8437D44B25A} = {090CF0AE-6E2A-49A4-A192-C8437D44B25A}
+		{21107DC1-8FC3-4CEA-A949-73F1E4C107FD} = {21107DC1-8FC3-4CEA-A949-73F1E4C107FD}
+		{329E70DB-6C85-4FC6-94C5-17BDEEBAC51E} = {329E70DB-6C85-4FC6-94C5-17BDEEBAC51E}
+	EndProjectSection
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BookService", "BookService\BookService.csproj", "{329E70DB-6C85-4FC6-94C5-17BDEEBAC51E}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BookService", "BookService\BookService.csproj", "{329E70DB-6C85-4FC6-94C5-17BDEEBAC51E}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ReaderService", "ReaderService\ReaderService.csproj", "{090CF0AE-6E2A-49A4-A192-C8437D44B25A}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ReaderService", "ReaderService\ReaderService.csproj", "{090CF0AE-6E2A-49A4-A192-C8437D44B25A}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AuthorService", "AuthorService\AuthorService.csproj", "{21107DC1-8FC3-4CEA-A949-73F1E4C107FD}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AuthorService", "AuthorService\AuthorService.csproj", "{21107DC1-8FC3-4CEA-A949-73F1E4C107FD}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

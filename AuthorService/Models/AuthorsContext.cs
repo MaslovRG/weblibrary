@@ -12,5 +12,10 @@ namespace AuthorService.Models
         public AuthorsContext(DbContextOptions<AuthorsContext> options)
             : base(options)
         { }
+        
+        public AuthorsContext()
+        {
+
+        }
     }
 }
