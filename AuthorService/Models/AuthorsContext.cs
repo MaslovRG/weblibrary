@@ -11,6 +11,7 @@ namespace AuthorService.Models
     public class AuthorsContext : DbContext
     {
         public DbSet<Author> Authors { get; set; }
+        [ExcludeFromCodeCoverage]
         public AuthorsContext(DbContextOptions<AuthorsContext> options)
             : base(options)
         { }

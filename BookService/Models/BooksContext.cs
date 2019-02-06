@@ -11,6 +11,7 @@ namespace BookService.Models
     public class BooksContext : DbContext
     {
         public DbSet<Book> Books { get; set; }
+        [ExcludeFromCodeCoverage]
         public BooksContext(DbContextOptions<BooksContext> options)
             : base(options)
         { }

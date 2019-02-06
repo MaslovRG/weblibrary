@@ -26,18 +26,17 @@ namespace WebLibraryTests
             database = GetDatabase();
         }
 
-        private ReadersContext GetDatabase(List<Reader> readers = null)
+        private ReadersContext GetDatabase(List<Reader> readers = null, List<ReadedBook> readedBooks = null)
         {
             if (readers == null)
                 readers = new List<Reader>();
             return Mock.Of<ReadersContext>(db =>
                 db.Readers == GetReaders(readers)
-                && db.ReadedBooks == GetReadedBooks());
+                && db.ReadedBooks == GetReadedBooks(readedBooks));
         }
 
         private bool BookEqual(Reader reader1, Reader reader2)
         {
-
             return reader1.Nickname == reader2.Nickname; 
         }
 

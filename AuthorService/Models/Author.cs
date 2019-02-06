@@ -11,6 +11,7 @@ namespace AuthorService.Models
     public class Author
     {
         [JsonIgnore]
+        [ExcludeFromCodeCoverage]
         public int Id { get; set; }
         public string Name { get; set; }
     }
