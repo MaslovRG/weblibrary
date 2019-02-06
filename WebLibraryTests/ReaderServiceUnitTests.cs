@@ -16,10 +16,10 @@ namespace WebLibraryTests
     [TestClass]
     public class ReaderServiceUnitTests
     {
-        private ILogger<ReaderController> _logger;
+        /*private ILogger<ReaderController> _logger;
         private ReadersContext database;
 
-        /*[TestInitialize]
+        [TestInitialize]
         public void Initialize()
         {
             _logger = Mock.Of<ILogger<ReaderController>>();
@@ -31,7 +31,8 @@ namespace WebLibraryTests
             if (readers == null)
                 readers = new List<Reader>();
             return Mock.Of<ReadersContext>(db =>
-                db.Readers == GetReaders(readers));
+                db.Readers == GetReaders(readers)
+                && db.ReadedBooks == GetReadedBooks());
         }
 
         private bool BookEqual(Reader reader1, Reader reader2)
@@ -39,12 +40,12 @@ namespace WebLibraryTests
             return book1.Name == book2.Name
                 && book1.Author == book2.Author
                 && book1.Year == book2.Year;
-        }*/
+        }
 
         [TestMethod]
         public void Test1()
         {
             // empty
-        }
+        }*/
     }
 }
