@@ -1,7 +1,20 @@
+using System;
+using System.Collections.Generic;
+using System.Text;
+using System.Linq;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
+using Moq;
+using Gateway;
 using Gateway.Controllers;
-using System.Collections.Generic;
+using Gateway.Models;
+using Gateway.Models.Authors;
+using Gateway.Models.Books;
+using Gateway.Models.Readers;
+using Gateway.Services;
+using Gateway.Services.Implementation; 
+using Microsoft.Extensions.Logging;
 
 namespace WebLibraryTests
 {
@@ -9,19 +22,11 @@ namespace WebLibraryTests
     public class GatewayUnitTests
     {
         [TestMethod]
-        public void GWTest1()
+        public void Test1()
         {
-            /*GatewayController gwc = new GatewayController();
-
-            ActionResult<IEnumerable<string>> result = gwc.Get();
-            IEnumerator<string> rl = result.Value.GetEnumerator();
-
-            rl.MoveNext(); 
-            Assert.AreEqual("value1", rl.Current);
-            rl.MoveNext(); 
-            Assert.AreEqual("value2", rl.Current); */
-            Assert.AreEqual(1, 1); 
+            
         }
+
         //[TestMethod]
     }
 }

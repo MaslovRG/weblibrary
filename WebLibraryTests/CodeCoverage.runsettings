@@ -1,0 +1,10 @@
+﻿<ModulePaths>  
+  <Exclude>  
+    <ModulePath>Moq.dll</ModulePath>
+    <ModulePath>Newtonsoft.dll</ModulePath>
+    <ModulePath>moq.dll</ModulePath>
+    <ModulePath>newtonsoft.dll</ModulePath>
+    <ModulePath>NewtonSoft.dll</ModulePath>
+   <!-- Add more ModulePath nodes here. -->  
+  </Exclude>  
+</ModulePaths>  
