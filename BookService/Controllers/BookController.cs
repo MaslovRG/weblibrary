@@ -117,8 +117,8 @@ namespace BookService.Controllers
                 var list = database.Books.Where(book => book.Author == Name);
                 if (list.Any())
                     result = list.ToList(); 
-                else
-                    result = NoContent(); 
+                /*else
+                    result = NoContent(); */
             }
             catch
             {
