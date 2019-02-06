@@ -12,6 +12,8 @@
                 <ModulePath>.*\.exe$</ModulePath>  
               </Include>
               <Exclude>
+                <ModulePath>.*BookService.*</ModulePath>
+                <ModulePath>.*bookservice.*</ModulePath>
                 <ModulePath>.*Moq.*</ModulePath>
                 <ModulePath>.*Newtonsoft.*</ModulePath>
                 <ModulePath>.*moq.*</ModulePath>
