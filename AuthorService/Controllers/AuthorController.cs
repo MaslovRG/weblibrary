@@ -30,9 +30,15 @@ namespace AuthorService.Controllers
             try
             {
                 if (database.Authors.Any())
+                {
                     result = database.Authors;
+                    _logger.LogInformation("Succesful getting"); 
+                }
                 else
+                {
                     result = NoContent();
+                    _logger.LogInformation("No authors found");
+                }
             }
             catch
             {
@@ -53,7 +59,12 @@ namespace AuthorService.Controllers
             {
                 var list = database.Authors.Where(author => author.Name == Name);
                 if (list.Any())
+                {
                     result = list.First();
+                    _logger.LogInformation("Succesful getting"); 
+                }
+                else
+                    _logger.LogInformation("No authors found"); 
             }
             catch
             {

@@ -37,6 +37,7 @@ namespace Gateway.Controllers
         [HttpGet]
         public async Task<ActionResult<PagedList<Reader>>> Get(int? page, int? size)
         {
+            _logger.LogInformation("Get readers"); 
             var readers = await readerService.GetReaders();
             return SupportingFunctions.GetPagedList(readers, page, size); 
         }
@@ -45,10 +46,14 @@ namespace Gateway.Controllers
         [HttpGet("{Nickname}")]
         public async Task<ActionResult<Reader>> Get(string Nickname)
         {
+            _logger.LogInformation($"Get reader: {Nickname}"); 
             var reader = await readerService.GetReader(Nickname);
 
             if (reader == null)
+            {
+                _logger.LogInformation("Can't find reader"); 
                 return NotFound();
+            }            
 
             return reader;
         }
@@ -57,6 +62,7 @@ namespace Gateway.Controllers
         [HttpPost]
         public async Task<ActionResult> Post([FromBody] string Nickname)
         {
+            _logger.LogInformation($"Add reader: {Nickname}"); 
             var response = await readerService.AddReader(Nickname);
             return SupportingFunctions.GetResponseResult(response);
         }
@@ -65,10 +71,12 @@ namespace Gateway.Controllers
         [HttpPost("{Nickname}/book/{Name}")]
         public async Task<ActionResult> Post(string Nickname, string Name)
         {
+            _logger.LogInformation($"Add book {Name} to reader {Nickname}"); 
             var reader = await readerService.GetReader(Nickname);
             var book = await bookService.GetBook(Name); 
             if (reader != null && book != null)
             {
+                _logger.LogInformation("Can't find book or reader"); 
                 var response = await readerService.AddBookToReader(Nickname, Name);
                 return SupportingFunctions.GetResponseResult(response);
             }
@@ -79,6 +87,7 @@ namespace Gateway.Controllers
         [HttpDelete("{Nickname}/book/{Name}")]
         public async Task<ActionResult> Delete(string Nickname, string Name)
         {
+            _logger.LogInformation($"Delete book {Name} from reader {Nickname}"); 
             var response = await readerService.DeleteBookFromReader(Nickname, Name);
             return SupportingFunctions.GetResponseResult(response); 
         }
@@ -87,6 +96,7 @@ namespace Gateway.Controllers
         [HttpGet("{Nickname}/books")]
         public async Task<ActionResult<PagedList<Book>>> GetBooks(string Nickname, int? page, int? size)
         {
+            _logger.LogInformation($"Get reader {Nickname} books information"); 
             var nameList = await readerService.GetReaderBooks(Nickname);
             var books = new List<Book>(); 
             foreach (var bookName in nameList)
@@ -102,6 +112,7 @@ namespace Gateway.Controllers
         [HttpGet("Nickname/authors")]
         public async Task<ActionResult<PagedList<Author>>> GetAuthors(string Nickname, int? page, int? size)
         {
+            _logger.LogInformation($"Get reader {Nickname} readed authors"); 
             var nameList = await readerService.GetReaderBooks(Nickname);
             var authors = new List<Author>();
             foreach (var bookName in nameList)

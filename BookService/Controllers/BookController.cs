@@ -30,9 +30,15 @@ namespace BookService.Controllers
             try
             {
                 if (database.Books.Any())
+                {
                     result = database.Books;
+                    _logger.LogInformation("Succesful getting");
+                }
                 else
-                    result = NoContent(); 
+                {
+                    result = NoContent();
+                    _logger.LogInformation("No books found"); 
+                }
             }
             catch
             {
@@ -53,7 +59,12 @@ namespace BookService.Controllers
             {
                 var list = database.Books.Where(book => book.Name == Name);
                 if (list.Any())
+                {
                     result = list.First();
+                    _logger.LogInformation("Succesful getting");
+                }
+                else
+                    _logger.LogInformation("No books found"); 
             }
             catch
             {
@@ -95,7 +106,10 @@ namespace BookService.Controllers
                 var deleteList = database.Books.Where(book => book.Name == Name);
                 if (deleteList.Any())
                     database.Books.RemoveRange(deleteList);
-                database.SaveChanges(); 
+                else
+                    _logger.LogInformation("Already deleted or not yet added"); 
+                database.SaveChanges();
+                _logger.LogInformation("Succesful deleting"); 
             }
             catch
             {
@@ -116,9 +130,15 @@ namespace BookService.Controllers
             {
                 var list = database.Books.Where(book => book.Author == Name);
                 if (list.Any())
-                    result = list.ToList(); 
-                /*else
-                    result = NoContent(); */
+                {
+                    result = list.ToList();
+                    _logger.LogInformation("Succesful getting"); 
+                }
+                else
+                {
+                    _logger.LogInformation("No books found");
+                    //result = NoContent();
+                }
             }
             catch
             {
