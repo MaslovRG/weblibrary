@@ -37,9 +37,8 @@ namespace WebLibraryTests
 
         private bool BookEqual(Reader reader1, Reader reader2)
         {
-            return book1.Name == book2.Name
-                && book1.Author == book2.Author
-                && book1.Year == book2.Year;
+
+            return reader1.Nickname == reader2.Nickname; 
         }
 
         [TestMethod]
