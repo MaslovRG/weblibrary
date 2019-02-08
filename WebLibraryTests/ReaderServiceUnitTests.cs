@@ -397,7 +397,7 @@ namespace WebLibraryTests
 
             var result = service.AddReaderBook("Name", "Nick"); 
             var statusCode = (StatusCodeResult)result;
-            Assert.AreEqual(204, statusCode.StatusCode);
+            Assert.AreEqual(400, statusCode.StatusCode);
         }
 
         [TestMethod]
