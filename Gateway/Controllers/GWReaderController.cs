@@ -59,8 +59,8 @@ namespace Gateway.Controllers
         }
 
         // POST: reader
-        [HttpPost]
-        public async Task<ActionResult> Post([FromBody] string Nickname)
+        [HttpPost("{Nickname}")]
+        public async Task<ActionResult> Post(string Nickname)
         {
             _logger.LogInformation($"Add reader: {Nickname}"); 
             var response = await readerService.AddReader(Nickname);

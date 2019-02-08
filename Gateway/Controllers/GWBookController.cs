@@ -63,19 +63,21 @@ namespace Gateway.Controllers
         [HttpPost]
         public async Task<ActionResult> Post([FromBody] Book book)
         {
-            _logger.LogInformation("Add book"); 
-            var response = await authorService.AddAuthor(new Author
+            _logger.LogInformation("Add book");
+            HttpResponseMessage response = null; 
+            if (book != null && book.Author != null)
             {
-                Name = book?.Author 
-            });
-            var trueBook = book;
-            if (response == null || !response.IsSuccessStatusCode)
-            {
-                _logger.LogInformation("Can't find or add author"); 
-                if (trueBook != null)
-                    trueBook.Author = null;
-            }
-            response = await bookService.AddBook(trueBook);
+                response = await authorService.AddAuthor(new Author
+                {
+                    Name = book.Author
+                });
+                if (response == null || !response.IsSuccessStatusCode)
+                {
+                    _logger.LogInformation("Can't find or add author");
+                    book.Author = null;
+                }
+            }                
+            response = await bookService.AddBook(book);
             return SupportingFunctions.GetResponseResult(response); 
         }
 
