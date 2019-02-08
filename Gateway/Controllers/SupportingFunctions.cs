@@ -13,6 +13,7 @@ namespace Gateway.Controllers
     {
         public static ActionResult GetResponseResult(HttpResponseMessage response)
         {
+            //var code = (int)response.StatusCode;        
             if (response == null || !response.IsSuccessStatusCode)
                 return new StatusCodeResult(500); 
             return new StatusCodeResult(200);

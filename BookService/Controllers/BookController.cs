@@ -83,7 +83,8 @@ namespace BookService.Controllers
             try
             {
                 var Book = new Book { Name = book.Name, Year = book.Year, Author = book.Author };
-                database.Books.Add(Book);
+                if (!database.Books.Where(x => x.Name == book.Name).Any())
+                    database.Books.Add(Book);
                 database.SaveChanges();
                 _logger.LogInformation("Succesful adding"); 
             }

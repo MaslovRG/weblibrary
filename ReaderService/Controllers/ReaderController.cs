@@ -104,7 +104,8 @@ namespace ReaderService.Controllers
             try
             {
                 var reader = new Reader { Nickname = Nickname }; //, Books = new List<ReadedBook>() };
-                database.Readers.Add(reader);
+                if (!database.Readers.Where(x => x.Nickname == Nickname).Any())
+                    database.Readers.Add(reader);
                 database.SaveChanges();
                 _logger.LogInformation("Succesful adding");
             }
@@ -174,7 +175,8 @@ namespace ReaderService.Controllers
             ActionResult result = Ok();
             try
             {
-                var readers = database.Readers.Where(x => x.Nickname == Nickname);                 
+                var readers = database.Readers.Where(x => x.Nickname == Nickname 
+                    && !x.Books.Where(zz => zz.Name == Name).Any());                 
                 if (readers.Any())
                 {
                     var reader = readers.First();
@@ -184,8 +186,8 @@ namespace ReaderService.Controllers
                 }
                 else
                 {
-                    result = NoContent();
-                    _logger.LogInformation("No reader with this nickname"); 
+                    result = BadRequest();
+                    _logger.LogInformation("No reader with this nickname or book already adding"); 
                 }
             }
             catch
