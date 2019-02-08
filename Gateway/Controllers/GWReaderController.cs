@@ -78,11 +78,11 @@ namespace Gateway.Controllers
             var reader = await readerService.GetReader(Nickname);
             var book = await bookService.GetBook(Name); 
             if (reader != null && book != null)
-            {
-                _logger.LogInformation("Can't find book or reader"); 
+            {                
                 var response = await readerService.AddBookToReader(Nickname, Name);
                 return GetResponseResult(response);
             }
+            _logger.LogInformation("Can't find book or reader");
             return NotFound(); 
         }
 
@@ -113,7 +113,7 @@ namespace Gateway.Controllers
         }
 
         // GET: reader/Nickname/authors?page=1&size=5
-        [HttpGet("Nickname/authors")]
+        [HttpGet("{Nickname}/authors")]
         public async Task<ActionResult<PagedList<Author>>> GetAuthors(string Nickname, int? page, int? size)
         {
             _logger.LogInformation($"Get reader {Nickname} readed authors"); 

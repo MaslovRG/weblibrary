@@ -7,7 +7,7 @@ namespace Gateway.Models.Readers
 {
     public class Reader
     {
-        public string Name { get; set; }
-        public List<string> ReadedBooks { get; set; }
+        public string Nickname { get; set; }
+        public List<string> Books { get; set; }
     }
 }
