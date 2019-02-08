@@ -9,7 +9,8 @@ using Gateway.Services;
 using Gateway.Models.Readers;
 using Gateway.Models.Books;
 using Gateway.Models.Authors;
-using PagedList; 
+using PagedList;
+using System.Net.Http;
 
 namespace Gateway.Controllers
 {
@@ -20,13 +21,15 @@ namespace Gateway.Controllers
         private readonly ILogger<ReaderController> _logger;
         private IReaderService readerService;
         private IBookService bookService;
-        private IAuthorService authorService; 
+        private IAuthorService authorService;
+        private SupportingFunctions sup; 
 
         public ReaderController(ILogger<ReaderController> nLogger,
             IReaderService nReaderService,
             IBookService nBookService,
             IAuthorService nAuthorService)
         {
+            sup = new SupportingFunctions(); 
             _logger = nLogger;
             readerService = nReaderService;
             bookService = nBookService;
@@ -39,7 +42,7 @@ namespace Gateway.Controllers
         {
             _logger.LogInformation("Get readers"); 
             var readers = await readerService.GetReaders();
-            return SupportingFunctions.GetPagedList(readers, page, size); 
+            return GetPagedList(readers, page, size); 
         }
 
         // GET: reader/Nickname
@@ -64,7 +67,7 @@ namespace Gateway.Controllers
         {
             _logger.LogInformation($"Add reader: {Nickname}"); 
             var response = await readerService.AddReader(Nickname);
-            return SupportingFunctions.GetResponseResult(response);
+            return GetResponseResult(response);
         }
 
         // POST: reader/Nickname/book/Name
@@ -78,7 +81,7 @@ namespace Gateway.Controllers
             {
                 _logger.LogInformation("Can't find book or reader"); 
                 var response = await readerService.AddBookToReader(Nickname, Name);
-                return SupportingFunctions.GetResponseResult(response);
+                return GetResponseResult(response);
             }
             return NotFound(); 
         }
@@ -89,7 +92,7 @@ namespace Gateway.Controllers
         {
             _logger.LogInformation($"Delete book {Name} from reader {Nickname}"); 
             var response = await readerService.DeleteBookFromReader(Nickname, Name);
-            return SupportingFunctions.GetResponseResult(response); 
+            return GetResponseResult(response); 
         }
 
         // GET: reader/Nickname/books?page=1&size=5
@@ -106,7 +109,7 @@ namespace Gateway.Controllers
                     if (book != null)
                         books.Add(book); 
                 }
-            return SupportingFunctions.GetPagedList(books, page, size); 
+            return GetPagedList(books, page, size); 
         }
 
         // GET: reader/Nickname/authors?page=1&size=5
@@ -127,7 +130,30 @@ namespace Gateway.Controllers
                             authors.Add(author); 
                     }
                 }
-            return SupportingFunctions.GetPagedList(authors, page, size); 
+            return GetPagedList(authors, page, size); 
+        }
+
+        public ActionResult GetResponseResult(HttpResponseMessage response)
+        {
+            //var code = (int)response.StatusCode;
+            if (response == null || !response.IsSuccessStatusCode)
+                return StatusCode(500, "Internal error");
+            return Ok();
+        }
+
+        public ActionResult<PagedList<T>> GetPagedList<T>(List<T> list, int? page, int? size)
+        {
+            if (list == null)
+                return StatusCode(500, "Empty list");
+            ActionResult<PagedList<T>> result = new StatusCodeResult(204);
+            if (list.Count != 0)
+            {
+                if (page != null && page > 0 && size != null && size > 0)
+                    result = (PagedList<T>)list.ToPagedList((int)page, (int)size);
+                else
+                    result = (PagedList<T>)list.ToPagedList(1, list.Count);
+            }
+            return result;
         }
     }
 }

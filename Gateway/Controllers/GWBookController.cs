@@ -22,12 +22,14 @@ namespace Gateway.Controllers
         private IBookService bookService;
         private IAuthorService authorService;
         private IReaderService readerService;
+        private SupportingFunctions sup; 
 
         public BookController(ILogger<BookController> nLogger,
             IBookService nBookService,
             IAuthorService nAuthorService,
             IReaderService nReaderService)
         {
+            sup = new SupportingFunctions(); 
             _logger = nLogger;
             bookService = nBookService;
             authorService = nAuthorService;
@@ -40,7 +42,7 @@ namespace Gateway.Controllers
         {
             _logger.LogInformation("Get books"); 
             var books = await bookService.GetBooks();
-            return SupportingFunctions.GetPagedList(books, page, size); 
+            return GetPagedList(books, page, size); 
         }
 
         // GET: book/Name
@@ -78,7 +80,7 @@ namespace Gateway.Controllers
                 }
             }                
             response = await bookService.AddBook(book);
-            return SupportingFunctions.GetResponseResult(response); 
+            return GetResponseResult(response); 
         }
 
         // DELETE: book/Name
@@ -90,7 +92,7 @@ namespace Gateway.Controllers
             if (response == null || !response.IsSuccessStatusCode)
                 return StatusCode(500); 
             response = await bookService.DeleteBook(Name);
-            return SupportingFunctions.GetResponseResult(response); 
+            return GetResponseResult(response); 
         }          
 
         // GET: book/author/Name
@@ -99,7 +101,30 @@ namespace Gateway.Controllers
         {
             _logger.LogInformation($"Get books by author: {Name}");
             var books = await bookService.GetBooksByAuthor(Name);
-            return SupportingFunctions.GetPagedList(books, page, size); 
+            return GetPagedList(books, page, size); 
+        }
+
+        public ActionResult GetResponseResult(HttpResponseMessage response)
+        {
+            //var code = (int)response.StatusCode;
+            if (response == null || !response.IsSuccessStatusCode)
+                return StatusCode(500, "Internal error");
+            return Ok();
+        }
+
+        public ActionResult<PagedList<T>> GetPagedList<T>(List<T> list, int? page, int? size)
+        {
+            if (list == null)
+                return StatusCode(500, "Empty list");
+            ActionResult<PagedList<T>> result = new StatusCodeResult(204);
+            if (list.Count != 0)
+            {
+                if (page != null && page > 0 && size != null && size > 0)
+                    result = (PagedList<T>)list.ToPagedList((int)page, (int)size);
+                else
+                    result = (PagedList<T>)list.ToPagedList(1, list.Count);
+            }
+            return result;
         }
     }
 }

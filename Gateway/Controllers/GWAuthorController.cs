@@ -7,7 +7,8 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using Gateway.Services;
 using Gateway.Models.Authors; 
-using PagedList; 
+using PagedList;
+using System.Net.Http;
 
 namespace Gateway.Controllers
 {
@@ -16,11 +17,13 @@ namespace Gateway.Controllers
     public class AuthorController : ControllerBase
     {
         private readonly ILogger<AuthorController> _logger;
-        private IAuthorService authorService; 
+        private IAuthorService authorService;
+        private SupportingFunctions sup; 
 
         public AuthorController(ILogger<AuthorController> nLogger,
             IAuthorService nAuthorService)
         {
+            sup = new SupportingFunctions(); 
             _logger = nLogger;
             authorService = nAuthorService; 
         }
@@ -31,7 +34,7 @@ namespace Gateway.Controllers
         {
             _logger.LogInformation("Get authors"); 
             var authors = await authorService.GetAuthors();
-            return SupportingFunctions.GetPagedList(authors, page, size); 
+            return GetPagedList(authors, page, size); 
         }
 
         // GET: author/Name
@@ -56,7 +59,30 @@ namespace Gateway.Controllers
         {
             _logger.LogInformation("Add author"); 
             var response = await authorService.AddAuthor(author);
-            return SupportingFunctions.GetResponseResult(response); 
-        }        
+            return GetResponseResult(response); 
+        }
+
+        public ActionResult GetResponseResult(HttpResponseMessage response)
+        {
+            //var code = (int)response.StatusCode;
+            if (response == null || !response.IsSuccessStatusCode)
+                return StatusCode(500, "Internal error");
+            return Ok();
+        }
+
+        public ActionResult<PagedList<T>> GetPagedList<T>(List<T> list, int? page, int? size)
+        {
+            if (list == null)
+                return StatusCode(500, "Internal error");
+            ActionResult<PagedList<T>> result = StatusCode(204); 
+            if (list.Count != 0)
+            {
+                if (page != null && page > 0 && size != null && size > 0)
+                    result = (PagedList<T>)list.ToPagedList((int)page, (int)size);
+                else
+                    result = (PagedList<T>)list.ToPagedList(1, list.Count);
+            }
+            return result;
+        }
     }
 }
