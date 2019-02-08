@@ -99,12 +99,13 @@ namespace Gateway.Controllers
             _logger.LogInformation($"Get reader {Nickname} books information"); 
             var nameList = await readerService.GetReaderBooks(Nickname);
             var books = new List<Book>(); 
-            foreach (var bookName in nameList)
-            {
-                var book = await bookService.GetBook(bookName);
-                if (book != null)
-                    books.Add(book); 
-            }
+            if (nameList != null)
+                foreach (var bookName in nameList)
+                {
+                    var book = await bookService.GetBook(bookName);
+                    if (book != null)
+                        books.Add(book); 
+                }
             return SupportingFunctions.GetPagedList(books, page, size); 
         }
 
@@ -115,16 +116,17 @@ namespace Gateway.Controllers
             _logger.LogInformation($"Get reader {Nickname} readed authors"); 
             var nameList = await readerService.GetReaderBooks(Nickname);
             var authors = new List<Author>();
-            foreach (var bookName in nameList)
-            {
-                var book = await bookService.GetBook(bookName);
-                if (book != null && book.Author != null)
+            if (nameList != null)
+                foreach (var bookName in nameList)
                 {
-                    var author = await authorService.GetAuthor(book.Author);
-                    if (author != null)
-                        authors.Add(author); 
+                    var book = await bookService.GetBook(bookName);
+                    if (book != null && book.Author != null)
+                    {
+                        var author = await authorService.GetAuthor(book.Author);
+                        if (author != null)
+                            authors.Add(author); 
+                    }
                 }
-            }
             return SupportingFunctions.GetPagedList(authors, page, size); 
         }
     }

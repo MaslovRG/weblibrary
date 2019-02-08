@@ -66,13 +66,14 @@ namespace Gateway.Controllers
             _logger.LogInformation("Add book"); 
             var response = await authorService.AddAuthor(new Author
             {
-                Name = book.Author 
+                Name = book?.Author 
             });
             var trueBook = book;
             if (response == null || !response.IsSuccessStatusCode)
             {
                 _logger.LogInformation("Can't find or add author"); 
-                trueBook.Author = null;
+                if (trueBook != null)
+                    trueBook.Author = null;
             }
             response = await bookService.AddBook(trueBook);
             return SupportingFunctions.GetResponseResult(response); 
