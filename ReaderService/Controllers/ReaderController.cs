@@ -24,10 +24,15 @@ namespace ReaderService.Controllers
 
         // GET /
         [HttpGet]
-        public ActionResult<IEnumerable<ReaderOutput>> Get()
-        {
+        [ProducesResponseType(500)]
+        [ProducesResponseType(404)]
+        [ProducesResponseType(200)]
+        // ObjectResult<IEnumerable<ReaderOutput>>
+        public ObjectResult Get()
+        {            
             _logger.LogInformation("Get all readers");
-            ActionResult<IEnumerable<ReaderOutput>> result;
+            string message; 
+            ObjectResult result;
             try
             {
                 var readers = new List<ReaderOutput>(); 
@@ -35,7 +40,10 @@ namespace ReaderService.Controllers
                 {
                     foreach (var reader in database.Readers)
                     {
-                        var books = database.ReadedBooks.Where(x => x.Reader.Nickname == reader.Nickname).Select(x => x.Name).ToList(); 
+                        var books = database.ReadedBooks
+                            .Where(x => x.Reader.Nickname == reader.Nickname)
+                            .Select(x => x.Name)
+                            .ToList(); 
                         var nickname = reader.Nickname;
                         var addedreader = new ReaderOutput()
                         {
@@ -44,135 +52,180 @@ namespace ReaderService.Controllers
                         };
                         readers.Add(addedreader); 
                     }
-                    result = readers; 
-                    _logger.LogInformation("Successful getting");
+                    message = "Successful getting"; 
+                    result = Ok(readers);
+                    _logger.LogInformation(message);
                 }
                 else
                 {
-                    result = NoContent();
-                    _logger.LogInformation("Empty database"); 
+                    message = "No readers found"; 
+                    result = NotFound(message);
+                    _logger.LogInformation(message);
                 }
             }
             catch
             {
-                _logger.LogError("Problem with database while getting");
-                result = StatusCode(500);
+                message = "Problem with database while getting";
+                result = StatusCode(500, message);
+                _logger.LogError(message);
             }
-
             return result;
         }
 
         // GET /Nickname
         [HttpGet("{Nickname}")]
-        public ActionResult<ReaderOutput> Get(string Nickname)
+        [ProducesResponseType(500)]
+        [ProducesResponseType(404)]
+        [ProducesResponseType(200)]
+        // ObjectResult<ReaderOutput>
+        public ObjectResult Get(string Nickname)
         {
             _logger.LogInformation($"Get book with name: {Nickname}");
-            ActionResult<ReaderOutput> result = BadRequest();
+            string message; 
+            ObjectResult result;
             try
             {
-                var list = database.Readers.Where(reader => reader.Nickname == Nickname);
+                var list = database.Readers
+                    .Where(reader => reader.Nickname == Nickname);
                 if (list.Any())
                 {
-                    var reader = list.First(); 
+                    var reader = list.First();
                     var nickname = reader.Nickname;
-                    var books = database.ReadedBooks.Where(x => x.Reader.Nickname == nickname).Select(x => x.Name).ToList();
-                    result = new ReaderOutput()
+                    var books = database.ReadedBooks
+                        .Where(x => x.Reader.Nickname == nickname)
+                        .Select(x => x.Name)
+                        .ToList();
+
+                    message = "Successful getting";
+                    result = Ok(new ReaderOutput()
                     {
                         Nickname = nickname,
                         Books = books
-                    };
-                    _logger.LogInformation("Successful getting");
+                    });
+                    _logger.LogInformation(message);                    
                 }
                 else
-                    _logger.LogInformation("No reader with this nickname"); 
+                {
+                    message = "No reader with this nickname found";
+                    result = NotFound(message);
+                    _logger.LogInformation(message);                     
+                }
             }
             catch
             {
-                _logger.LogError("Problem with database while getting");
-                result = StatusCode(500);
+                message = "Problem with database while getting";
+                _logger.LogError(message);
+                result = StatusCode(500, message);
             }
-
             return result; 
         }
 
         // POST /
         [HttpPost]
-        public ActionResult Post([FromBody] string Nickname)
+        [ProducesResponseType(500)]
+        [ProducesResponseType(200)]
+        public ObjectResult Post([FromBody] string Nickname)
         {
             _logger.LogInformation($"Add reader: {Nickname}");
-            ActionResult result = Ok();
+            string message; 
+            ObjectResult result;
             try
             {
-                var reader = new Reader { Nickname = Nickname }; //, Books = new List<ReadedBook>() };
+                var reader = new Reader { Nickname = Nickname }; 
+                    //, Books = new List<ReadedBook>() };
+
                 if (!database.Readers.Where(x => x.Nickname == Nickname).Any())
                     database.Readers.Add(reader);
                 database.SaveChanges();
-                _logger.LogInformation("Succesful adding");
+                message = "Succesful adding";
+                result = Ok(message); 
+                _logger.LogInformation(message);
             }
             catch
             {
-                _logger.LogError("Problem with database while adding");
-                result = StatusCode(500);
+                message = "Problem with database while adding";
+                result = StatusCode(500, message);
+                _logger.LogError(message);                
             }
             return result;
         }
 
         // GET /Nickname/books
         [HttpGet("{Nickname}/books")]
-        public ActionResult<IEnumerable<string>> GetReaderBooks(string Nickname)
+        [ProducesResponseType(500)]
+        [ProducesResponseType(404)]
+        [ProducesResponseType(200)]
+        // ObjectResult<IEnumerable<string>>
+        public ObjectResult GetReaderBooks(string Nickname)
         {
             _logger.LogInformation($"Get all books of reader: {Nickname}");
-            ActionResult<IEnumerable<string>> result;
+            string message; 
+            ObjectResult result;
             try
             {
-                var books  = database.ReadedBooks.Where(x => x.Reader.Nickname == Nickname).Select(x => x.Name);
+                var books  = database.ReadedBooks
+                    .Where(x => x.Reader.Nickname == Nickname)
+                    .Select(x => x.Name)
+                    .ToList();
+
                 if (books.Any())
                 {
-                    result = books.ToList(); 
-                    _logger.LogInformation("Succesful getting!"); 
+                    message = "Succesful getting!"; 
+                    result = Ok(books); 
+                    _logger.LogInformation(message); 
                 }
                 else
                 {
-                    result = NoContent();
-                    _logger.LogInformation("No books with this name"); 
+                    message = "No books in user list found";
+                    result = NotFound(message);
+                    _logger.LogInformation(message); 
                 }
             }
             catch
             {
-                _logger.LogError("Problem with database while getting");
-                result = StatusCode(500);
+                message = "Problem with database while getting";
+                result = StatusCode(500, message);
+                _logger.LogError(message);                
             }
-
             return result;
         }
 
         // DELETE /book/Name
         [HttpDelete("book/{Name}")]
-        public ActionResult DeleteBook(string Name)
+        [ProducesResponseType(500)]
+        [ProducesResponseType(200)]
+        public ObjectResult DeleteBook(string Name)
         {
             _logger.LogInformation($"Delete from all lists book: {Name}");
-            ActionResult result = Ok();
+            string message; 
+            ObjectResult result;
             try
             {
-                database.ReadedBooks.RemoveRange(database.ReadedBooks.Where(x => x.Name == Name)); 
+                database.ReadedBooks
+                    .RemoveRange(database.ReadedBooks.Where(x => x.Name == Name)); 
                 database.SaveChanges();
-                _logger.LogInformation("Successful deleting"); 
+                message = "Succesful deleting"; 
+                result = Ok(message); 
+                _logger.LogInformation(message); 
             }
             catch
             {
-                _logger.LogError("Problem with database while deleting");
-                result = StatusCode(500);
+                result = StatusCode(500, "Problem with database while deleting");
+                _logger.LogError("Problem with database while deleting");                
             }
-
             return result;
         }
 
         // POST /Nickname/book
         [HttpPost("{Nickname}/book")]
-        public ActionResult AddReaderBook([FromBody] string Name, string Nickname)
+        [ProducesResponseType(500)]
+        [ProducesResponseType(400)]
+        [ProducesResponseType(200)]
+        public ObjectResult AddReaderBook([FromBody] string Name, string Nickname)
         {
             _logger.LogInformation($"Add book {Name} to reader {Nickname}");
-            ActionResult result = Ok();
+            string message; 
+            ObjectResult result;
             try
             {
                 var readers = database.Readers.Where(x => x.Nickname == Nickname 
@@ -180,30 +233,39 @@ namespace ReaderService.Controllers
                 if (readers.Any())
                 {
                     var reader = readers.First();
-                    database.ReadedBooks.Add(new ReadedBook { Name = Name, Reader = reader }); 
+                    database.ReadedBooks.Add(new ReadedBook
+                        { Name = Name, Reader = reader }); 
                     database.SaveChanges();
-                    _logger.LogInformation("Succesful adding");
+                    message = "Succesful adding"; 
+                    result = Ok(message); 
+                    _logger.LogInformation(message);
                 }
                 else
                 {
-                    result = BadRequest();
-                    _logger.LogInformation("No reader with this nickname or book already adding"); 
+                    message = "No reader with this nickname found or book already adding";
+                    result = BadRequest(message);
+                    _logger.LogInformation(message); 
                 }
             }
             catch
             {
-                _logger.LogError("Problem with database while adding");
-                result = StatusCode(500);
+                message = "Problem with database while adding"; 
+                result = StatusCode(500, message);
+                _logger.LogError(message);                
             }
             return result;
         }
 
         // DELETE /Nickname/book/Name
         [HttpDelete("{Nickname}/book/{Name}")]
-        public ActionResult DeleteReaderBook(string Nickname, string Name)
+        [ProducesResponseType(500)]
+        [ProducesResponseType(400)]
+        [ProducesResponseType(200)]
+        public ObjectResult DeleteReaderBook(string Nickname, string Name)
         {
             _logger.LogInformation($"Delete book {Name} from reader {Nickname}");
-            ActionResult result = Ok();
+            string message; 
+            ObjectResult result;
             try
             {
                 var readers = database.Readers.Where(x => x.Nickname == Nickname);
@@ -213,18 +275,22 @@ namespace ReaderService.Controllers
                         x.Name == Name && x.Reader.Nickname == Nickname));
                     
                     database.SaveChanges();
-                    _logger.LogInformation("Succesful deleting");
+                    message = "Succesful deleting"; 
+                    result = Ok(message); 
+                    _logger.LogInformation(message);
                 }
                 else
                 {
-                    result = NoContent();
-                    _logger.LogInformation("No reader with this nickname");
+                    message = "No reader with this nickname found"; 
+                    result = BadRequest(message);
+                    _logger.LogInformation(message);
                 }
             }
             catch
             {
-                _logger.LogError("Problem with database while deleting");
-                result = StatusCode(500);
+                message = "Problem with database while deleting"; 
+                result = StatusCode(500, message);
+                _logger.LogError(message);                
             }
             return result;
         }

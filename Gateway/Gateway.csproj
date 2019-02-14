@@ -5,6 +5,8 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Folder Include="Views\Reader\" />
+    <Folder Include="Views\Author\" />
     <Folder Include="wwwroot\" />
   </ItemGroup>
 

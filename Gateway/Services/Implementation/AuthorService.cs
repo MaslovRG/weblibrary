@@ -15,21 +15,22 @@ namespace Gateway.Services.Implementation
         public AuthorService(IConfiguration configuration) :
             base(configuration.GetSection("ServiceAddresses")["AuthorService"]) { }
 
-        public async Task<List<Author>> GetAuthors()
+        public async Task<Result<List<Author>>> GetAuthors()
         {
             var response = await Get("");
-            return await GetObjectOrNullFromJson<List<Author>>(response);  
+            return await Result<List<Author>>.CreateAsync(response);  
         }
 
-        public async Task<Author> GetAuthor(string Name)
+        public async Task<Result<Author>> GetAuthor(string Name)
         {
             var response = await Get(Name);
-            return await GetObjectOrNullFromJson<Author>(response);
+            return await Result<Author>.CreateAsync(response);
         }
 
-        public async Task<HttpResponseMessage> AddAuthor(Author Author)
+        public async Task<Result> AddAuthor(Author Author)
         {
-            return await PostJson("", Author); 
+            var response = await PostJson("", Author);
+            return await Result.CreateAsync(response); 
         }
     }
 }

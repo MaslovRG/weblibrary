@@ -55,10 +55,7 @@ namespace WebLibraryTests
             mockSet.Setup(x => x.RemoveRange(It.IsAny<IEnumerable<Book>>()))
                 .Callback<IEnumerable<Book>>(x =>
                 {
-                    foreach (var book in x)
-                    {
-                        books.Remove(book);
-                    }
+                    books.RemoveAll(book => x.Contains(book));
                 });
             return mockSet.Object;
         }
@@ -68,10 +65,9 @@ namespace WebLibraryTests
         {
             var service = new BookController(null, _logger);
 
-            var result = service.Get();
-            Assert.AreEqual(null, result.Value);
-            var statusCode = (StatusCodeResult)result.Result;
-            Assert.AreEqual(500, statusCode.StatusCode);
+            var result = service.Get();         
+            Assert.AreEqual(500, result.StatusCode);
+            Assert.AreEqual("Problem with database while getting", result.Value); 
         }
 
         [TestMethod]
@@ -79,10 +75,9 @@ namespace WebLibraryTests
         {
             var service = new BookController(database, _logger);
 
-            var result = service.Get();
-            Assert.AreEqual(null, result.Value);
-            var statusCode = (StatusCodeResult)result.Result;
-            Assert.AreEqual(204, statusCode.StatusCode);
+            var result = service.Get();           
+            Assert.AreEqual(404, result.StatusCode);
+            Assert.AreEqual("No books found", result.Value); 
         }
 
         [TestMethod]
@@ -98,7 +93,8 @@ namespace WebLibraryTests
             var service = new BookController(database, _logger);
 
             var result = service.Get();
-            var list = result.Value.ToList();
+            Assert.AreEqual(200, result.StatusCode); 
+            var list = ((DbSet<Book>)result.Value).ToList();
             Assert.AreEqual(books.Count, list.Count);
             for (int i = 0; i < books.Count; i++)
             {
@@ -112,9 +108,8 @@ namespace WebLibraryTests
             var service = new BookController(null, _logger);
 
             var result = service.Get("B2");
-            Assert.AreEqual(null, result.Value);
-            var statusCode = (StatusCodeResult)result.Result;
-            Assert.AreEqual(500, statusCode.StatusCode);
+            Assert.AreEqual(500, result.StatusCode);
+            Assert.AreEqual("Problem with database while getting", result.Value);
         }
 
         [TestMethod]
@@ -129,11 +124,9 @@ namespace WebLibraryTests
             database = GetDatabase(books);
             var service = new BookController(database, _logger);
 
-            var result = service.Get("B400");
-            var book = result.Value;
-            var code = ((StatusCodeResult)result.Result).StatusCode;
-            Assert.AreEqual(400, code);
-            Assert.AreEqual(null, book);
+            var result = service.Get("B400");            
+            Assert.AreEqual(404, result.StatusCode);
+            Assert.AreEqual("No books with this name found", result.Value);
         }
 
         [TestMethod]
@@ -150,8 +143,8 @@ namespace WebLibraryTests
             var service = new BookController(database, _logger);
 
             var result = service.Get("B2");
-            var book = result.Value;
-            Assert.AreEqual(true, BookEqual(gettedBook, book));
+            Assert.AreEqual(200, result.StatusCode); 
+            Assert.AreEqual(true, BookEqual(gettedBook, (Book)result.Value));
         }
 
         [TestMethod]
@@ -166,8 +159,8 @@ namespace WebLibraryTests
             };
 
             var result = service.Post(book);
-            var statusCode = (StatusCodeResult)result;
-            Assert.AreEqual(500, statusCode.StatusCode);
+            Assert.AreEqual(500, result.StatusCode);
+            Assert.AreEqual("Problem with database while adding", result.Value); 
         }
 
         [TestMethod]
@@ -186,11 +179,12 @@ namespace WebLibraryTests
             foreach (var book in booksNew)
             {
                 var code = service.Post(book);
-                var statusCode = (StatusCodeResult)code;
-                Assert.AreEqual(200, statusCode.StatusCode);
+                Assert.AreEqual(200, code.StatusCode);
+                Assert.AreEqual("Succesful adding", code.Value); 
             }
 
             var result = service.Get();
+            Assert.AreEqual(200, result.StatusCode); 
             Assert.AreEqual(booksNew.Count, books.Count);
             for (int i = 0; i < booksNew.Count; i++)
             {
@@ -204,8 +198,8 @@ namespace WebLibraryTests
             var service = new BookController(null, _logger);
 
             var result = service.Delete("A1");
-            var statusCode = (StatusCodeResult)result;
-            Assert.AreEqual(500, statusCode.StatusCode);
+            Assert.AreEqual(500, result.StatusCode);
+            Assert.AreEqual("Problem with database while deleting", result.Value); 
         }
 
         [TestMethod]
@@ -227,7 +221,8 @@ namespace WebLibraryTests
             var service = new BookController(database, _logger);
 
             var result = service.Delete("Not a book");
-
+            Assert.AreEqual(200, result.StatusCode);
+            Assert.AreEqual("Alreadey deleted or not yet added", result.Value); 
             Assert.AreEqual(booksNew.Count, books.Count);
             for (int i = 0; i < booksNew.Count; i++)
             {
@@ -253,7 +248,8 @@ namespace WebLibraryTests
             var service = new BookController(database, _logger);
 
             var result = service.Delete("B2");
-
+            Assert.AreEqual(200, result.StatusCode);
+            Assert.AreEqual("Succesful deleting", result.Value); 
             Assert.AreEqual(booksNew.Count, books.Count);
             for (int i = 0; i < booksNew.Count; i++)
             {
@@ -266,9 +262,9 @@ namespace WebLibraryTests
         {
             var service = new BookController(null, _logger);
 
-            var result = service.GetBooksByAuthor("SimpleAuthor"); 
-            var statusCode = (StatusCodeResult)result.Result;
-            Assert.AreEqual(500, statusCode.StatusCode);
+            var result = service.GetBooksByAuthor("SimpleAuthor");
+            Assert.AreEqual(500, result.StatusCode);
+            Assert.AreEqual("Problem with database while getting", result.Value); 
         }
 
         [TestMethod]
@@ -284,9 +280,8 @@ namespace WebLibraryTests
             var service = new BookController(database, _logger);
 
             var result = service.GetBooksByAuthor("Simple Author");
-
-            var statusCode = (StatusCodeResult)result.Result;
-            Assert.AreEqual(400, statusCode.StatusCode);
+            Assert.AreEqual(404, result.StatusCode);
+            Assert.AreEqual("No books with this author found", result.Value); 
         }
 
         [TestMethod]
@@ -313,7 +308,7 @@ namespace WebLibraryTests
             var service = new BookController(database, _logger);
 
             var result = service.GetBooksByAuthor("Au2");
-
+            Assert.AreEqual(200, result.StatusCode); 
             var booksNew = (List<Book>)result.Value;
             Assert.AreEqual(booksFound.Count, booksNew.Count);
             for (int i = 0; i < booksFound.Count; i++)

@@ -54,9 +54,8 @@ namespace WebLibraryTests
             var service = new AuthorController(null, _logger);
 
             var result = service.Get();
-            Assert.AreEqual(null, result.Value);
-            var statusCode = (StatusCodeResult)result.Result;
-            Assert.AreEqual(500, statusCode.StatusCode); 
+            Assert.AreEqual(500, result.StatusCode);
+            Assert.AreEqual("Problem with database while getting", result.Value);
         }
         
         [TestMethod]
@@ -65,9 +64,8 @@ namespace WebLibraryTests
             var service = new AuthorController(database, _logger);
 
             var result = service.Get();
-            Assert.AreEqual(null, result.Value);
-            var statusCode = (StatusCodeResult)result.Result;
-            Assert.AreEqual(204, statusCode.StatusCode);
+            Assert.AreEqual(404, result.StatusCode);
+            Assert.AreEqual("No authors found", result.Value);
         }
 
         [TestMethod]
@@ -83,7 +81,8 @@ namespace WebLibraryTests
             var service = new AuthorController(database, _logger);
 
             var result = service.Get();
-            var list = result.Value.ToList();
+            Assert.AreEqual(200, result.StatusCode); 
+            var list = ((DbSet<Author>)result.Value).ToList(); 
             Assert.AreEqual(authors.Count, list.Count); 
             for (int i = 0; i < authors.Count; i++)
             {
@@ -96,10 +95,9 @@ namespace WebLibraryTests
         {
             var service = new AuthorController(null, _logger);
 
-            var result = service.Get("B2");
-            Assert.AreEqual(null, result.Value);
-            var statusCode = (StatusCodeResult)result.Result;
-            Assert.AreEqual(500, statusCode.StatusCode);
+            var result = service.Get("B2");            
+            Assert.AreEqual(500, result.StatusCode);
+            Assert.AreEqual("Problem with database while getting", result.Value); 
         }
 
         [TestMethod]
@@ -115,10 +113,8 @@ namespace WebLibraryTests
             var service = new AuthorController(database, _logger);
 
             var result = service.Get("B400");
-            var author = result.Value;
-            var code = ((StatusCodeResult)result.Result).StatusCode;
-            Assert.AreEqual(400, code);
-            Assert.AreEqual(null, author); 
+            Assert.AreEqual(404, result.StatusCode);
+            Assert.AreEqual("No authors with this name found", result.Value); 
         }
 
         [TestMethod]
@@ -134,8 +130,10 @@ namespace WebLibraryTests
             var service = new AuthorController(database, _logger);
 
             var result = service.Get("B2");
-            var author = result.Value;
+            Assert.AreEqual(200, result.StatusCode);
+            var author = (Author)result.Value;
             Assert.AreEqual("B2", author.Name);
+            
         }
 
         [TestMethod] 
@@ -148,8 +146,8 @@ namespace WebLibraryTests
             };
 
             var result = service.Post(author);
-            var statusCode = (StatusCodeResult)result;
-            Assert.AreEqual(500, statusCode.StatusCode);
+            Assert.AreEqual(500, result.StatusCode);
+            Assert.AreEqual("Problem with database while adding", result.Value); 
         }
 
         [TestMethod]
@@ -167,18 +165,18 @@ namespace WebLibraryTests
 
             foreach (var author in authorsNew)
             {
-                var code = service.Post(author);
-                var statusCode = (StatusCodeResult)code;
-                Assert.AreEqual(200, statusCode.StatusCode);
+                var code = service.Post(author);                
+                Assert.AreEqual(200, code.StatusCode);
+                Assert.AreEqual("Succesful adding", code.Value); 
             }
 
             var result = service.Get();
+            Assert.AreEqual(200, result.StatusCode); 
             Assert.AreEqual(authorsNew.Count, authors.Count);
             for (int i = 0; i < authorsNew.Count; i++)
             {
                 Assert.AreEqual(authorsNew[i].Name, authors[i].Name);
             }
-
         }
     }
 }

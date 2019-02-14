@@ -9,12 +9,12 @@ namespace Gateway.Services
 {
     public interface IReaderService
     {
-        Task<List<Reader>> GetReaders();
-        Task<Reader> GetReader(string Nickname);
-        Task<HttpResponseMessage> AddReader(string Nickname);
-        Task<List<string>> GetReaderBooks(string Nickname);
-        Task<HttpResponseMessage> DeleteBook(string Name);
-        Task<HttpResponseMessage> AddBookToReader(string Nickname, string Name);
-        Task<HttpResponseMessage> DeleteBookFromReader(string Nickname, string Name); 
+        Task<Result<List<Reader>>> GetReaders();
+        Task<Result<Reader>> GetReader(string Nickname);
+        Task<Result> AddReader(string Nickname);
+        Task<Result<List<string>>> GetReaderBooks(string Nickname);
+        Task<Result> DeleteBook(string Name);
+        Task<Result> AddBookToReader(string Nickname, string Name);
+        Task<Result> DeleteBookFromReader(string Nickname, string Name); 
     }
 }

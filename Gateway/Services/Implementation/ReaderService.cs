@@ -16,42 +16,46 @@ namespace Gateway.Services.Implementation
             base(configuration.GetSection("ServiceAddresses")["ReaderService"])
         { }
 
-        public async Task<List<Reader>> GetReaders()
+        public async Task<Result<List<Reader>>> GetReaders()
         {
             var response = await Get("");
-            return await GetObjectOrNullFromJson<List<Reader>>(response);
+            return await Result<List<Reader>>.CreateAsync(response);
         }
 
-        public async Task<Reader> GetReader(string Nickname)
+        public async Task<Result<Reader>> GetReader(string Nickname)
         {
             var response = await Get(Nickname);
-            return await GetObjectOrNullFromJson<Reader>(response);
+            return await Result<Reader>.CreateAsync(response);
         }
 
-        public async Task<HttpResponseMessage> AddReader(string Nickname)
+        public async Task<Result> AddReader(string Nickname)
         {
-            return await PostJson("", Nickname);
+            var response = await PostJson("", Nickname);
+            return await Result.CreateAsync(response); 
         }
 
-        public async Task<List<string>> GetReaderBooks(string Nickname)
+        public async Task<Result<List<string>>> GetReaderBooks(string Nickname)
         {
             var response = await Get($"{Nickname}/books");
-            return await GetObjectOrNullFromJson<List<string>>(response);
+            return await Result<List<string>>.CreateAsync(response);
         }
 
-        public async Task<HttpResponseMessage> DeleteBook(string Name)
+        public async Task<Result> DeleteBook(string Name)
         {
-            return await Delete($"book/{Name}"); 
+            var response = await Delete($"book/{Name}");
+            return await Result.CreateAsync(response);
         }
 
-        public async Task<HttpResponseMessage> AddBookToReader(string Nickname, string Name)
+        public async Task<Result> AddBookToReader(string Nickname, string Name)
         {
-            return await PostJson($"{Nickname}/book", Name); 
+            var response = await PostJson($"{Nickname}/book", Name);
+            return await Result.CreateAsync(response);
         }
 
-        public async Task<HttpResponseMessage> DeleteBookFromReader(string Nickname, string Name)
+        public async Task<Result> DeleteBookFromReader(string Nickname, string Name)
         {
-            return await Delete($"{Nickname}/book/{Name}");
+            var response = await Delete($"{Nickname}/book/{Name}");
+            return await Result.CreateAsync(response);
         }
     }
 }

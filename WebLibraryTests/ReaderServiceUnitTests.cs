@@ -163,9 +163,8 @@ namespace WebLibraryTests
             var service = new ReaderController(null, _logger);
 
             var result = service.Get();
-            Assert.AreEqual(null, result.Value);
-            var statusCode = (StatusCodeResult)result.Result;
-            Assert.AreEqual(500, statusCode.StatusCode);
+            Assert.AreEqual(500, result.StatusCode);
+            Assert.AreEqual("Problem with database while getting", result.Value); 
         }
 
         [TestMethod]
@@ -174,9 +173,8 @@ namespace WebLibraryTests
             var service = new ReaderController(database, _logger);
 
             var result = service.Get();
-            Assert.AreEqual(null, result.Value);
-            var statusCode = (StatusCodeResult)result.Result;
-            Assert.AreEqual(204, statusCode.StatusCode);
+            Assert.AreEqual(404, result.StatusCode);
+            Assert.AreEqual("No readers found", result.Value);
         }
 
         [TestMethod]
@@ -206,11 +204,13 @@ namespace WebLibraryTests
             database = GetDatabase(readers);
             var service = new ReaderController(database, _logger);
 
-            var result = service.Get().Value.ToList(); 
-            Assert.AreEqual(readersOutput.Count, result.Count);
-            for (int i = 0; i < result.Count; i++)
+            var result = service.Get();
+            Assert.AreEqual(200, result.StatusCode);
+            var output = (List<ReaderOutput>)result.Value; 
+            Assert.AreEqual(readersOutput.Count, output.Count);
+            for (int i = 0; i < output.Count; i++)
             {
-                Assert.AreEqual(true, OutputEqual(readersOutput[i], result[i])); 
+                Assert.AreEqual(true, OutputEqual(readersOutput[i], output[i])); 
             }
         }
 
@@ -220,9 +220,8 @@ namespace WebLibraryTests
             var service = new ReaderController(null, _logger);
 
             var result = service.Get("R2");
-            Assert.AreEqual(null, result.Value);
-            var statusCode = (StatusCodeResult)result.Result;
-            Assert.AreEqual(500, statusCode.StatusCode);
+            Assert.AreEqual(500, result.StatusCode);
+            Assert.AreEqual("Problem with database while getting", result.Value); 
         }
 
         [TestMethod]
@@ -231,9 +230,8 @@ namespace WebLibraryTests
             var service = new ReaderController(database, _logger);
 
             var result = service.Get("R2");
-            Assert.AreEqual(null, result.Value);
-            var statusCode = (StatusCodeResult)result.Result;
-            Assert.AreEqual(400, statusCode.StatusCode);
+            Assert.AreEqual(404, result.StatusCode);
+            Assert.AreEqual("No reader with this nickname found", result.Value);
         }
 
         [TestMethod]
@@ -253,8 +251,10 @@ namespace WebLibraryTests
             database = GetDatabase(readers);
             var service = new ReaderController(database, _logger);
 
-            var result = service.Get("R2").Value;
-            Assert.AreEqual(true, OutputEqual(readerOutput, result));
+            var result = service.Get("R2");
+            Assert.AreEqual(200, result.StatusCode);
+            var output = (ReaderOutput)result.Value; 
+            Assert.AreEqual(true, OutputEqual(readerOutput, output));
         }
 
         [TestMethod]
@@ -262,9 +262,9 @@ namespace WebLibraryTests
         {
             var service = new ReaderController(null, _logger);
 
-            var result = service.Post("R4"); 
-            var statusCode = (StatusCodeResult)result;
-            Assert.AreEqual(500, statusCode.StatusCode);
+            var result = service.Post("R4");
+            Assert.AreEqual(500, result.StatusCode);
+            Assert.AreEqual("Problem with database while adding", result.Value); 
         }
 
         [TestMethod]
@@ -286,9 +286,8 @@ namespace WebLibraryTests
             database = GetDatabase(readers);
             var service = new ReaderController(database, _logger);
 
-            var rexp = service.Post("R4");
-            var statusCode = (StatusCodeResult)rexp;
-            Assert.AreEqual(200, statusCode.StatusCode);
+            var result = service.Post("R4");
+            Assert.AreEqual(200, result.StatusCode);
 
             Assert.AreEqual(readers.Count, readersOutput.Count); 
             for (int i = 0; i < readers.Count; i++)
@@ -303,9 +302,8 @@ namespace WebLibraryTests
             var service = new ReaderController(null, _logger);
 
             var result = service.GetReaderBooks("R4");
-            Assert.AreEqual(null, result.Value);
-            var statusCode = (StatusCodeResult)result.Result;
-            Assert.AreEqual(500, statusCode.StatusCode);
+            Assert.AreEqual(500, result.StatusCode);
+            Assert.AreEqual("Problem with database while getting", result.Value); 
         }
 
         [TestMethod]
@@ -314,30 +312,30 @@ namespace WebLibraryTests
             var service = new ReaderController(database, _logger);
 
             var result = service.GetReaderBooks("R4");
-            Assert.AreEqual(null, result.Value);
-            var statusCode = (StatusCodeResult)result.Result;
-            Assert.AreEqual(204, statusCode.StatusCode);
+            Assert.AreEqual(404, result.StatusCode);
+            Assert.AreEqual("No books in user list found", result.Value);
         }
 
         [TestMethod]
         public void Test11()
         {
-            var list = new List<string>() { "B2", "B6", "B7" }; 
+            var list = new List<string>() { "B2", "B6", "B7" };
             var readers = new List<Reader>()
             {
                 CreateReader("R1", new List<string>() { "B1", "B2", "B3" }),
                 CreateReader("R2", new List<string>() { "B3", "B1", "B5" }),
                 CreateReader("R3", list)
-            };            
+            };                
             database = GetDatabase(readers);
             var service = new ReaderController(database, _logger);
 
-            var result = service.GetReaderBooks("R3").Value.ToList(); 
-
-            Assert.AreEqual(list.Count, result.Count); 
-            for (int i = 0; i < result.Count; i++)
+            var result = service.GetReaderBooks("R3");
+            Assert.AreEqual(200, result.StatusCode);
+            var output = (List<string>)result.Value; 
+            Assert.AreEqual(list.Count, output.Count); 
+            for (int i = 0; i < output.Count; i++)
             {
-                Assert.AreEqual(list[i], result[i]); 
+                Assert.AreEqual(list[i], output[i]); 
             }
         }
 
@@ -347,8 +345,8 @@ namespace WebLibraryTests
             var service = new ReaderController(null, _logger);
 
             var result = service.DeleteBook("B2");
-            var statusCode = (StatusCodeResult)result;
-            Assert.AreEqual(500, statusCode.StatusCode);
+            Assert.AreEqual(500, result.StatusCode);
+            Assert.AreEqual("Problem with database while deleting", result.Value); 
         }
 
         [TestMethod]
@@ -369,9 +367,8 @@ namespace WebLibraryTests
             database = GetDatabase(readers);
             var service = new ReaderController(database, _logger);
 
-            var rexp = service.DeleteBook("B2"); 
-            var statusCode = (StatusCodeResult)rexp;
-            Assert.AreEqual(200, statusCode.StatusCode);
+            var result = service.DeleteBook("B2");
+            Assert.AreEqual(200, result.StatusCode);
 
             Assert.AreEqual(readers.Count, readersOutput.Count);
             for (int i = 0; i < readers.Count; i++)
@@ -385,9 +382,9 @@ namespace WebLibraryTests
         {
             var service = new ReaderController(null, _logger);
 
-            var result = service.AddReaderBook("Name", "Nick"); 
-            var statusCode = (StatusCodeResult)result;
-            Assert.AreEqual(500, statusCode.StatusCode);
+            var result = service.AddReaderBook("Name", "Nick");
+            Assert.AreEqual(500, result.StatusCode);
+            Assert.AreEqual("Problem with database while adding", result.Value); 
         }
 
         [TestMethod]
@@ -395,9 +392,9 @@ namespace WebLibraryTests
         {
             var service = new ReaderController(database, _logger);
 
-            var result = service.AddReaderBook("Name", "Nick"); 
-            var statusCode = (StatusCodeResult)result;
-            Assert.AreEqual(400, statusCode.StatusCode);
+            var result = service.AddReaderBook("Name", "Nick");
+            Assert.AreEqual(400, result.StatusCode);
+            Assert.AreEqual("No reader with this nickname found or book already adding", result.Value);
         }
 
         [TestMethod]
@@ -418,9 +415,8 @@ namespace WebLibraryTests
             database = GetDatabase(readers);
             var service = new ReaderController(database, _logger);
 
-            var rexp = service.AddReaderBook("B100", "R3");
-            var statusCode = (StatusCodeResult)rexp;
-            Assert.AreEqual(200, statusCode.StatusCode);
+            var result = service.AddReaderBook("B100", "R3");            
+            Assert.AreEqual(200, result.StatusCode);
 
             Assert.AreEqual(readers.Count, readersOutput.Count);
             for (int i = 0; i < readers.Count; i++)
@@ -435,8 +431,8 @@ namespace WebLibraryTests
             var service = new ReaderController(null, _logger);
 
             var result = service.DeleteReaderBook("Nick", "Name");
-            var statusCode = (StatusCodeResult)result;
-            Assert.AreEqual(500, statusCode.StatusCode);
+            Assert.AreEqual(500, result.StatusCode);
+            Assert.AreEqual("Problem with database while deleting", result.Value); 
         }
 
         [TestMethod]
@@ -445,8 +441,8 @@ namespace WebLibraryTests
             var service = new ReaderController(database, _logger);
 
             var result = service.DeleteReaderBook("Nick", "Name");
-            var statusCode = (StatusCodeResult)result;
-            Assert.AreEqual(204, statusCode.StatusCode);
+            Assert.AreEqual(400, result.StatusCode);
+            Assert.AreEqual("No reader with this nickname found", result.Value);
         }
 
         [TestMethod]
@@ -467,9 +463,8 @@ namespace WebLibraryTests
             database = GetDatabase(readers);
             var service = new ReaderController(database, _logger);
 
-            var rexp = service.DeleteReaderBook("R1", "B2");
-            var statusCode = (StatusCodeResult)rexp;
-            Assert.AreEqual(200, statusCode.StatusCode);
+            var result = service.DeleteReaderBook("R1", "B2");            
+            Assert.AreEqual(200, result.StatusCode);
 
             Assert.AreEqual(readers.Count, readersOutput.Count);
             for (int i = 0; i < readers.Count; i++)

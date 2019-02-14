@@ -15,32 +15,34 @@ namespace Gateway.Services.Implementation
         public BookService(IConfiguration configuration) : 
             base(configuration.GetSection("ServiceAddresses")["BookService"]) { }
 
-        public async Task<List<Book>> GetBooks()
+        public async Task<Result<List<Book>>> GetBooks()
         {
             var response = await Get("");
-            return await GetObjectOrNullFromJson<List<Book>>(response);
+            return await Result<List<Book>>.CreateAsync(response);
         }
 
-        public async Task<Book> GetBook(string Name)
+        public async Task<Result<Book>> GetBook(string Name)
         {
             var response = await Get(Name);
-            return await GetObjectOrNullFromJson<Book>(response);
+            return await Result<Book>.CreateAsync(response);
         }
 
-        public async Task<HttpResponseMessage> AddBook(Book Book)
+        public async Task<Result> AddBook(Book Book)
         {
-            return await PostJson("", Book); 
+            var response = await PostJson("", Book);
+            return await Result.CreateAsync(response); 
         }
 
-        public async Task<HttpResponseMessage> DeleteBook(string Name)
+        public async Task<Result> DeleteBook(string Name)
         {
-            return await Delete(Name); 
+            var response = await Delete(Name);
+            return await Result.CreateAsync(response); 
         }
 
-        public async Task<List<Book>> GetBooksByAuthor(string Author)
+        public async Task<Result<List<Book>>> GetBooksByAuthor(string Author)
         {
             var response = await Get($"author/{Author}");
-            return await GetObjectOrNullFromJson<List<Book>>(response);
+            return await Result<List<Book>>.CreateAsync(response);
         }
     }
 }

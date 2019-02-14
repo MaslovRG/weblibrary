@@ -41,8 +41,21 @@ namespace Gateway.Controllers
         public async Task<ActionResult<PagedList<Book>>> Get(int? page, int? size)
         {
             _logger.LogInformation("Get books"); 
-            var books = await bookService.GetBooks();
-            return GetPagedList(books, page, size); 
+            var response = await bookService.GetBooks();
+
+            if (response == null)
+            {
+                _logger.LogInformation("Internal gateway error");
+                return StatusCode(500, "Internal error");
+            }
+
+            if (response.Code != 200)
+            {
+                _logger.LogInformation("Can't get books"); 
+                return StatusCode(response.Code, response.Message); 
+            }
+
+            return GetPagedList(response.Value, page, size); 
         }
 
         // GET: book/Name
@@ -50,15 +63,22 @@ namespace Gateway.Controllers
         public async Task<ActionResult<Book>> Get(string Name)
         {
             _logger.LogInformation($"Get book: {Name}"); 
-            var book = await bookService.GetBook(Name);
+            var response = await bookService.GetBook(Name);
 
-            if (book == null)
+            if (response == null)
             {
-                _logger.LogInformation("Can't find book"); 
-                return NotFound();
+                _logger.LogInformation("Internal gateway error");
+                return StatusCode(500, "Internal error");
             }
 
-            return book; 
+            if (response.Code != 200)
+            {
+                _logger.LogInformation("Can't get book"); 
+                return StatusCode(response.Code, response.Message);
+            }
+
+            _logger.LogInformation("Succesfully get book"); 
+            return Ok(response.Value); 
         }
 
         // POST: book
@@ -66,21 +86,27 @@ namespace Gateway.Controllers
         public async Task<ActionResult> Post([FromBody] Book book)
         {
             _logger.LogInformation("Add book");
-            HttpResponseMessage response = null; 
+            Result response = null; 
             if (book != null && book.Author != null)
             {
                 response = await authorService.AddAuthor(new Author
                 {
                     Name = book.Author
                 });
-                if (response == null || !response.IsSuccessStatusCode)
+                if (response == null || response.Code != 200)
                 {
                     _logger.LogInformation("Can't find or add author");
                     book.Author = null;
                 }
             }                
             response = await bookService.AddBook(book);
-            return GetResponseResult(response); 
+
+            if (response == null)
+            {
+                return StatusCode(500, "Internal error");
+            }
+
+            return StatusCode(response.Code, response.Message); 
         }
 
         // DELETE: book/Name
@@ -89,10 +115,21 @@ namespace Gateway.Controllers
         {
             _logger.LogInformation($"Delete book: {Name}"); 
             var response = await readerService.DeleteBook(Name);
-            if (response == null || !response.IsSuccessStatusCode)
-                return StatusCode(500); 
+
+            if (response == null)
+            {
+                _logger.LogInformation("Internal gateway error");
+                return StatusCode(500, "Internal error");
+            }
+
+            if (response.Code != 200)
+            {
+                _logger.LogInformation("Can't delete book from readers"); 
+                return StatusCode(response.Code, response.Message);
+            }
+
             response = await bookService.DeleteBook(Name);
-            return GetResponseResult(response); 
+            return StatusCode(response.Code, response.Message); 
         }          
 
         // GET: book/author/Name
@@ -100,17 +137,21 @@ namespace Gateway.Controllers
         public async Task<ActionResult<PagedList<Book>>> GetBooksByAuthor(string Name, int? page, int? size)
         {
             _logger.LogInformation($"Get books by author: {Name}");
-            var books = await bookService.GetBooksByAuthor(Name);
-            return GetPagedList(books, page, size); 
-        }
+            var response = await bookService.GetBooksByAuthor(Name);
 
-        public ActionResult GetResponseResult(HttpResponseMessage response)
-        {
-            //var code = (int)response.StatusCode;
-            if (response == null || !response.IsSuccessStatusCode)
+            if (response == null)
+            {
                 return StatusCode(500, "Internal error");
-            return Ok();
-        }
+            }
+
+            if (response.Code != 200)
+            {
+                _logger.LogInformation("Can't get books by author"); 
+                return StatusCode(response.Code, response.Message);
+            }
+
+            return GetPagedList(response.Value, page, size); 
+        }       
 
         public ActionResult<PagedList<T>> GetPagedList<T>(List<T> list, int? page, int? size)
         {
@@ -120,9 +161,10 @@ namespace Gateway.Controllers
             if (list.Count != 0)
             {
                 if (page != null && page > 0 && size != null && size > 0)
-                    result = (PagedList<T>)list.ToPagedList((int)page, (int)size);
+                    result = Ok((PagedList<T>)list.ToPagedList((int)page, (int)size));
                 else
-                    result = (PagedList<T>)list.ToPagedList(1, list.Count);
+                    result = Ok((PagedList<T>)list.ToPagedList(1, list.Count));
+                _logger.LogInformation("Succesfully get list"); 
             }
             return result;
         }

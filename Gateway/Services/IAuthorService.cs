@@ -9,8 +9,8 @@ namespace Gateway.Services
 {
     public interface IAuthorService
     {
-        Task<List<Author>> GetAuthors();
-        Task<Author> GetAuthor(string Name);
-        Task<HttpResponseMessage> AddAuthor(Author Author); 
+        Task<Result<List<Author>>> GetAuthors();
+        Task<Result<Author>> GetAuthor(string Name);
+        Task<Result> AddAuthor(Author Author); 
     }
 }

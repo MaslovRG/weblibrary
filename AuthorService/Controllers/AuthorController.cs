@@ -23,75 +23,100 @@ namespace AuthorService.Controllers
 
         // GET /
         [HttpGet]
-        public ActionResult<IEnumerable<Author>> Get()
+        [ProducesResponseType(500)]
+        [ProducesResponseType(404)]
+        [ProducesResponseType(200)]
+        // ObjectResult<IEnumerable<Author>>
+        public ObjectResult Get()
         {
             _logger.LogInformation("Get all authors");
-            ActionResult<IEnumerable<Author>> result;
+            string message; 
+            ObjectResult result;
             try
             {
                 if (database.Authors.Any())
                 {
-                    result = database.Authors;
-                    _logger.LogInformation("Succesful getting"); 
+                    message = "Succesful getting";
+                    result = Ok(database.Authors);                    
+                    _logger.LogInformation(message); 
                 }
                 else
                 {
-                    result = NoContent();
-                    _logger.LogInformation("No authors found");
+                    message = "No authors found";
+                    result = StatusCode(404, message);
+                    _logger.LogInformation(message);
                 }
             }
             catch
             {
-                _logger.LogError("Problem with database while getting");
-                result = StatusCode(500);
+                message = "Problem with database while getting";
+                result = StatusCode(500, message);
+                _logger.LogError(message);
             }
-
             return result;
         }
 
         // GET /Name
         [HttpGet("{Name}")]
-        public ActionResult<Author> Get(string Name)
+        [ProducesResponseType(500)]
+        [ProducesResponseType(404)]
+        [ProducesResponseType(200)]
+        // ObjectResult<Author>
+        public ObjectResult Get(string Name)
         {
             _logger.LogInformation($"Get author with name: {Name}");
-            ActionResult<Author> result = BadRequest();
+            string message; 
+            ObjectResult result;
             try
             {
                 var list = database.Authors.Where(author => author.Name == Name);
                 if (list.Any())
                 {
-                    result = list.First();
-                    _logger.LogInformation("Succesful getting"); 
+                    message = "Succesful getting";
+                    result = Ok(list.First());                    
+                    _logger.LogInformation(message);
                 }
                 else
-                    _logger.LogInformation("No authors found"); 
+                {
+                    message = "No authors with this name found";
+                    result = StatusCode(404, message); 
+                    _logger.LogInformation(message);
+                }
             }
             catch
             {
-                _logger.LogError("Problem with database while getting");
-                result = StatusCode(500);
+                message = "Problem with database while getting";
+                result = StatusCode(500, message);
+                _logger.LogError(message);
             }
             return result;
         }
 
         // POST /
         [HttpPost]
-        public ActionResult Post([FromBody]Author author)
+        [ProducesResponseType(500)]
+        [ProducesResponseType(200)]
+        public ObjectResult Post([FromBody]Author author)
         {
             _logger.LogInformation($"Add author: {author.Name}");
-            ActionResult result = Ok();
+            string message; 
+            ObjectResult result;
             try
             {
                 var Book = new Author { Name = author.Name };
                 if (!database.Authors.Where(x => x.Name == author.Name).Any())
                     database.Authors.Add(Book);
                 database.SaveChanges();
-                _logger.LogInformation("Succesful adding");
+
+                message = "Succesful adding";
+                result = Ok(message);
+                _logger.LogInformation(message);
             }
             catch
             {
-                _logger.LogError("Problem with database while adding");
-                result = StatusCode(500);
+                message = "Problem with database while adding";
+                result = StatusCode(500, message);
+                _logger.LogError(message);
             }
             return result;
         }
