@@ -2,19 +2,17 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using System.Net.Http; 
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging; 
 using Gateway.Services;
 using Gateway.Models.Books;
 using Gateway.Models.Authors;
 using Gateway.Models.Readers; 
-using PagedList;
+using X.PagedList; 
 
 namespace Gateway.Controllers
 {
-    [Route("book")]
+    [Route("api/book")]
     [ApiController]
     public class BookController : ControllerBase
     {
@@ -38,7 +36,8 @@ namespace Gateway.Controllers
 
         // GET: book?page=1&size=5
         [HttpGet]
-        public async Task<ActionResult<PagedList<Book>>> Get(int? page, int? size)
+        // ObjectResult<PagedList<Book>>
+        public async Task<ObjectResult> Get(int? page, int? size)
         {
             _logger.LogInformation("Get books"); 
             var response = await bookService.GetBooks();
@@ -60,7 +59,8 @@ namespace Gateway.Controllers
 
         // GET: book/Name
         [HttpGet("{Name}")]
-        public async Task<ActionResult<Book>> Get(string Name)
+        // ObjectResult<Book>
+        public async Task<ObjectResult> Get(string Name)
         {
             _logger.LogInformation($"Get book: {Name}"); 
             var response = await bookService.GetBook(Name);
@@ -83,7 +83,7 @@ namespace Gateway.Controllers
 
         // POST: book
         [HttpPost]
-        public async Task<ActionResult> Post([FromBody] Book book)
+        public async Task<ObjectResult> Post([FromBody] Book book)
         {
             _logger.LogInformation("Add book");
             Result response = null; 
@@ -111,7 +111,7 @@ namespace Gateway.Controllers
 
         // DELETE: book/Name
         [HttpDelete("{Name}")]
-        public async Task<ActionResult> Delete(string Name)
+        public async Task<ObjectResult> Delete(string Name)
         {
             _logger.LogInformation($"Delete book: {Name}"); 
             var response = await readerService.DeleteBook(Name);
@@ -134,7 +134,8 @@ namespace Gateway.Controllers
 
         // GET: book/author/Name
         [HttpGet("author/{Name}")]
-        public async Task<ActionResult<PagedList<Book>>> GetBooksByAuthor(string Name, int? page, int? size)
+        // ObjectResult<PagedList<Book>>
+        public async Task<ObjectResult> GetBooksByAuthor(string Name, int? page, int? size)
         {
             _logger.LogInformation($"Get books by author: {Name}");
             var response = await bookService.GetBooksByAuthor(Name);
@@ -151,21 +152,26 @@ namespace Gateway.Controllers
             }
 
             return GetPagedList(response.Value, page, size); 
-        }       
+        }
 
-        public ActionResult<PagedList<T>> GetPagedList<T>(List<T> list, int? page, int? size)
+        public ObjectResult GetPagedList<T>(List<T> list, int? page, int? size)
         {
+            ObjectResult result = StatusCode(404, "Not found");
             if (list == null)
-                return StatusCode(500, "Empty list");
-            ActionResult<PagedList<T>> result = new StatusCodeResult(204);
-            if (list.Count != 0)
+            {
+                result = StatusCode(500, "Empty list");
+                _logger.LogInformation("Empty list");
+            }
+
+            if (list != null && list.Count != 0)
             {
                 if (page != null && page > 0 && size != null && size > 0)
                     result = Ok((PagedList<T>)list.ToPagedList((int)page, (int)size));
                 else
                     result = Ok((PagedList<T>)list.ToPagedList(1, list.Count));
-                _logger.LogInformation("Succesfully get list"); 
+                _logger.LogInformation("Succesfully get list");
             }
+
             return result;
         }
     }

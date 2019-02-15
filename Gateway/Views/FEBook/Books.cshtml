@@ -1,0 +1,27 @@
+﻿@model X.PagedList.PagedList<Gateway.Models.Books.Book>
+@using X.PagedList.Mvc.Core; 
+@{
+    ViewBag.Title = "Books";
+}
+
+<h2>Books</h2>
+
+<table class="table">
+    <tr>
+        <th>Title</th>
+    </tr>
+
+    @foreach (var item in Model)
+    {
+        <tr>
+            <td>
+                @Html.DisplayFor(modelItem => item.Name)
+            </td>
+        </tr>
+    }
+
+</table>
+<br />
+Page @(Model.PageCount < Model.PageNumber ? 0 : Model.PageNumber) of @Model.PageCount
+
+@Html.PagedListPager(Model, page => Url.Action("Books", new { page }))

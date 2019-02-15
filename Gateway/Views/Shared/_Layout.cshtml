@@ -4,10 +4,8 @@
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>@ViewBag.Title – Личная электронная библиотека</title>
+    <title>@ViewBag.Title – WebLibrary</title>
     <script src="~/Scripts/jquery-1.10.2.js"></script>
-    <script src="~/Scripts/ckeditor/ckeditor.js"></script>
-    <script src="~/Themes/ckeditor_full/ckeditor.js"></script>
     <link href="~/Content/Bootstrap.min.css" rel="stylesheet" />
 </head>
 <body>
@@ -23,9 +21,9 @@
             </div>
             <div class="navbar-collapse collapse">
                 <ul class="nav navbar-nav">                                        
-                    <li>@Html.ActionLink("Books", "Index", "Book")</li>
-                    <li>@Html.ActionLink("Authors", "Index", "Author")</li>
-                    <li>@Html.ActionLink("Users", "Index", "Genre")</li>
+                    <li>@Html.ActionLink("Books", "Books", "FEBook")</li>
+                    <li>@Html.ActionLink("Authors", "Authors", "FEAuthor")</li>
+                    <li>@Html.ActionLink("Readers", "Readers", "FEReader")</li>
                 </ul>
             </div>
         </div>

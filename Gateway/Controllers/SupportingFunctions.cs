@@ -5,7 +5,6 @@ using System.Threading.Tasks;
 using System.Net.Http;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using PagedList; 
 
 namespace Gateway.Controllers
 {

@@ -2,17 +2,15 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using Gateway.Services;
-using Gateway.Models.Authors; 
-using PagedList;
-using System.Net.Http;
+using Gateway.Models.Authors;
+using X.PagedList; 
 
 namespace Gateway.Controllers
 {
-    [Route("author")]
+    [Route("api/author")]
     [ApiController]
     public class AuthorController : ControllerBase
     {
@@ -30,7 +28,8 @@ namespace Gateway.Controllers
 
         // GET: author?page=1&size=5
         [HttpGet]
-        public async Task<ActionResult<PagedList<Author>>> Get(int? page, int? size)
+        // ObjectResult<PagedList<Author>>
+        public async Task<ObjectResult> Get(int? page, int? size)
         {
             _logger.LogInformation("Get authors"); 
             var response = await authorService.GetAuthors();
@@ -52,7 +51,8 @@ namespace Gateway.Controllers
 
         // GET: author/Name
         [HttpGet("{Name}")]
-        public async Task<ActionResult<Author>> Get(string Name)
+        // ObjectResult<Author>
+        public async Task<ObjectResult> Get(string Name)
         {
             _logger.LogInformation($"Get author: {Name}"); 
             var response = await authorService.GetAuthor(Name);
@@ -75,7 +75,7 @@ namespace Gateway.Controllers
 
         // POST: author
         [HttpPost]
-        public async Task<ActionResult> Post([FromBody] Author author)
+        public async Task<ObjectResult> Post([FromBody] Author author)
         {
             _logger.LogInformation("Add author"); 
             var response = await authorService.AddAuthor(author);
@@ -89,12 +89,16 @@ namespace Gateway.Controllers
             return StatusCode(response.Code, response.Message);  
         }
 
-        public ActionResult<PagedList<T>> GetPagedList<T>(List<T> list, int? page, int? size)
+        public ObjectResult GetPagedList<T>(List<T> list, int? page, int? size)
         {
+            ObjectResult result = StatusCode(404, "Not found");
             if (list == null)
-                return StatusCode(500, "Empty list");
-            ActionResult<PagedList<T>> result = StatusCode(204); 
-            if (list.Count != 0)
+            {
+                result = StatusCode(500, "Empty list");
+                _logger.LogInformation("Empty list"); 
+            }
+
+            if (list != null && list.Count != 0)
             {
                 if (page != null && page > 0 && size != null && size > 0)
                     result = Ok((PagedList<T>)list.ToPagedList((int)page, (int)size));
@@ -102,6 +106,7 @@ namespace Gateway.Controllers
                     result = Ok((PagedList<T>)list.ToPagedList(1, list.Count));
                 _logger.LogInformation("Succesfully get list"); 
             }
+
             return result;
         }
     }

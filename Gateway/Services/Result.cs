@@ -49,7 +49,7 @@ namespace Gateway.Services
     {
         public T Value { get; set; }
 
-        public async static Task<Result<T>> CreateAsync(HttpResponseMessage response)
+        public async static new Task<Result<T>> CreateAsync(HttpResponseMessage response)
         {
             Result<T> result = new Result<T>
             {

@@ -12,6 +12,7 @@ using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using System.Diagnostics.CodeAnalysis;
 using Gateway.Services;
+using Gateway.Controllers; 
 using Gateway.Services.Implementation; 
 
 namespace Gateway
@@ -31,7 +32,11 @@ namespace Gateway
         {
             services.AddSingleton<IBookService, BookService>();
             services.AddSingleton<IAuthorService, AuthorService>();
-            services.AddSingleton<IReaderService, ReaderService>(); 
+            services.AddSingleton<IReaderService, ReaderService>();
+
+            services.AddSingleton<AuthorController>();
+            services.AddSingleton<BookController>();
+            services.AddSingleton<ReaderController>(); 
 
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
         }
@@ -45,6 +50,7 @@ namespace Gateway
             }
             
             app.UseMvc();
+            app.UseStaticFiles(); 
         }
     }
 }
