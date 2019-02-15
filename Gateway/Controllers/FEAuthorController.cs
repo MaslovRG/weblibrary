@@ -4,7 +4,8 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using Gateway.Models; 
+using Gateway.Models;
+using Gateway.Models.Authors; 
 
 namespace Gateway.Controllers
 {
@@ -34,7 +35,8 @@ namespace Gateway.Controllers
             }
 
             var result = await authorController.Get(page, size);
-
+            if (result != null && result.StatusCode == 404)
+                return View(); 
             if (result == null || result.StatusCode != 200)
             {
                 Error error = new Error(result); 
@@ -43,6 +45,20 @@ namespace Gateway.Controllers
             
             return View(result.Value);
         }
-        
+
+        [HttpGet("add")]
+        public IActionResult AddAuthor(string Name)
+        {
+            return View(new Author { Name = Name }); 
+        }
+
+        [HttpPost("add")]
+        public async Task<IActionResult> AddAuthor(Author author)
+        {
+            var result = await authorController.Post(author); 
+            if (result.StatusCode == 200)
+                return RedirectToAction(nameof(Authors));
+            return View("Error", new Error(result));
+        }
     }
 }

@@ -1,5 +1,5 @@
 ﻿@model X.PagedList.PagedList<Gateway.Models.Authors.Author>
-@using X.PagedList.Mvc.Core; 
+@using X.PagedList.Mvc.Core;
 @{
     ViewData["Title"] = "Authors";
 }
@@ -11,17 +11,34 @@
         <th>Name</th>
     </tr>
 
-    @foreach (var item in Model)
+    @if (Model != null)
+    {
+        foreach (var item in Model)
+        {
+            <tr>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Name)
+                </td>
+            </tr>
+        }
+    }
+    else
     {
         <tr>
-            <td>
-                @Html.DisplayFor(modelItem => item.Name)
-            </td>
+            <td>Authors not found</td>
         </tr>
     }
-
+        <tr>
+            <td><a asp-action="AddAuthor">Add new author</a></td>
+        </tr>
 </table>
 <br />
-Page @(Model.PageCount < Model.PageNumber ? 0 : Model.PageNumber) of @Model.PageCount
+@if (Model != null)
+{
+    <span>
+    Page @(Model.PageCount< Model.PageNumber ? 0 : Model.PageNumber) of @Model.PageCount
 
-@Html.PagedListPager(Model, page => Url.Action("Books", new { page }))
+    @Html.PagedListPager(Model, page => Url.Action("Authors", new { page }))
+    </span>
+}
+

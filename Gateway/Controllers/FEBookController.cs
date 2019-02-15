@@ -34,7 +34,8 @@ namespace Gateway.Controllers
             }
 
             var result = await bookController.Get(page, size);
-
+            if (result != null && result.StatusCode == 404)
+                return View();
             if (result == null || result.StatusCode != 200)
             {
                 Error error = new Error(result);
