@@ -29,7 +29,7 @@ namespace Gateway.Controllers
             if (page == null || size == null)
             {
                 var nPage = page ?? 1;
-                var nSize = size ?? 10;
+                var nSize = size ?? 2;
                 return Redirect($"/book?page={nPage}&size={nSize}");
             }
 
