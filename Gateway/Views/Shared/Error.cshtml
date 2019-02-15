@@ -1,0 +1,9 @@
+﻿@model Gateway.Models.Error; 
+@{
+    ViewBag.Title = "Error";
+}
+
+<h2 class="text-danger">Error while request execution</h2>
+<h4 class="text-danger">Code: @Model.Code</h4>
+<h4 class="text-danger">Message: @Model.Message</h4>
+

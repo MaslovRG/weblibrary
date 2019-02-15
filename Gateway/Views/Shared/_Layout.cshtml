@@ -1,0 +1,50 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>@ViewBag.Title – WebLibrary</title>
+    @if (IsSectionDefined("Scripts"))
+    {
+        RenderSection("Scripts");
+    }
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+    <script src="~/lib/jquery/dist/jquery.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/jquery-validation@1.17.0/dist/jquery.validate.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validation-unobtrusive/3.2.6/jquery.validate.unobtrusive.js"></script>
+    <link href="~/lib/devextreme/css/dx.common.css" rel="stylesheet" />
+    <link href="~/lib/devextreme/css/dx.light.css" rel="stylesheet" />
+    <script src="~/lib/devextreme/js/dx.all.js"></script>
+    <script src="~/lib/devextreme-aspnet-data/js/dx.aspnet.data.js"></script>
+    <script src="~/lib/devextreme/js/dx.aspnet.mvc.js"></script>
+</head>
+<body>
+    <div class="navbar navbar-inverse navbar-fixed-top">
+        <div class="container">
+            <div class="navbar-header">
+                <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                </button>
+                @Html.ActionLink("WebLibrary", "Index", "Home", new { area = "" }, new { @class = "navbar-brand" })
+            </div>
+            <div class="navbar-collapse collapse">
+                <ul class="nav navbar-nav">                                        
+                    <li>@Html.ActionLink("Books", "Books", "FEBook")</li>
+                    <li>@Html.ActionLink("Authors", "Authors", "FEAuthor")</li>
+                    <li>@Html.ActionLink("Readers", "Readers", "FEReader")</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+    <div class="container body-content">
+        @RenderBody()
+        <hr />
+        <footer>
+            <p>&copy; @DateTime.Now.Year – WebLibrary</p>
+        </footer>
+    </div>
+</body>
+</html>
