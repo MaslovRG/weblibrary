@@ -46,6 +46,19 @@ namespace Gateway.Controllers
             return View(result.Value);
         }
 
+        [HttpGet("{Name}")]
+        public async Task<IActionResult> Author(string Name)
+        {
+            var result = await authorController.Get(Name); 
+            if (result == null || result.StatusCode != 200)
+            {
+                Error error = new Error(result);
+                return View("Error", error); 
+            }
+
+            return View(result.Value); 
+        }
+
         [HttpGet("add")]
         public IActionResult AddAuthor(string Name)
         {

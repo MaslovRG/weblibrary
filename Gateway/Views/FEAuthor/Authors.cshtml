@@ -2,6 +2,7 @@
 @using X.PagedList.Mvc.Core;
 @{
     ViewData["Title"] = "Authors";
+    var size = Context.Request.Query["size"]; 
 }
 
 <h2>@ViewData["Title"]</h2>
@@ -17,7 +18,7 @@
         {
             <tr>
                 <td>
-                    @Html.DisplayFor(modelItem => item.Name)
+                    <a asp-action="Author" asp-route-name="@item.Name">@item.Name</a>
                 </td>
             </tr>
         }
@@ -28,17 +29,17 @@
             <td>Authors not found</td>
         </tr>
     }
-        <tr>
-            <td><a asp-action="AddAuthor">Add new author</a></td>
-        </tr>
+    <tr>
+        <td><a asp-action="AddAuthor">Add new author</a></td>
+    </tr>
 </table>
 <br />
 @if (Model != null)
 {
     <span>
-    Page @(Model.PageCount< Model.PageNumber ? 0 : Model.PageNumber) of @Model.PageCount
+        Page @(Model.PageCount < Model.PageNumber ? 0 : Model.PageNumber) of @Model.PageCount
 
-    @Html.PagedListPager(Model, page => Url.Action("Authors", new { page }))
+        @Html.PagedListPager(Model, page => Url.Action("Authors", new { page, size = size }))
     </span>
 }
 

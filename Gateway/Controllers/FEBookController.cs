@@ -47,9 +47,9 @@ namespace Gateway.Controllers
         }
 
         [HttpGet("add")]
-        public IActionResult AddBook(string Name)
+        public IActionResult AddBook(string Name, string Author)
         {
-            return View(new Book { Name = Name });
+            return View(new Book { Name = Name, Author = Author });
         }
 
         [HttpPost("add")]
@@ -62,5 +62,24 @@ namespace Gateway.Controllers
                 return RedirectToAction(nameof(Books));
             return View("Error", new Error(result));
         }
+
+        [HttpGet("author/{Name}")]
+        public async Task<IActionResult> AuthorBooks(string Name, int? page, int? size)
+        {
+            if (page == null || size == null)
+            {
+                var nPage = page ?? 1;
+                var nSize = size ?? 2;
+                return Redirect($"/book/author/{Name}?page={nPage}&size={nSize}");
+            }
+            var result = await bookController.GetBooksByAuthor(Name, page, size);
+            if (result == null || result.StatusCode != 200)
+            {
+                Error error = new Error(result);
+                return View("Error", error);
+            }
+            return View(result.Value); 
+        }
+
     }
 }

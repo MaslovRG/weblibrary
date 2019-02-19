@@ -1,0 +1,23 @@
+﻿@model Gateway.Models.Authors.Author
+
+@{
+    ViewData["Title"] = "Author details";
+}
+
+<h2>Author details</h2>
+
+<div>
+    <hr />
+    <dl class="dl-horizontal">
+        <dt>
+            @Html.DisplayNameFor(model => model.Name)
+        </dt>
+        <dd>            
+            @Html.DisplayFor(model => model.Name)
+        </dd>
+    </dl>
+</div>
+<div>
+    @Html.ActionLink("Get author books", "AuthorBooks", "FEBook", new { Name = Model.Name }) |
+    <a asp-action="Index">Back to List</a>
+</div>

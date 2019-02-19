@@ -1,0 +1,56 @@
+﻿@model X.PagedList.PagedList<Gateway.Models.Books.Book>
+@using X.PagedList.Mvc.Core;
+@{
+    ViewBag.Title = "Books";
+    var size = Context.Request.Query["size"];
+}
+
+<h2>Books by @Model[0].Author</h2>
+
+<table class="table">
+    <tr>
+        <th>Title</th>
+        <th>Year</th>
+        <th>Author</th>
+    </tr>
+
+    @if (Model != null)
+    {
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Name)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Year)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Author)
+                </td>
+            </tr>
+        }
+    }
+    else
+    {
+        <tr>
+            <td>Books not found</td>
+            <td></td>
+            <td></td>
+        </tr>
+    }
+        <tr>
+            <td><a asp-action="AddBook" asp-route-author="@Model[0].Author">Add new book</a></td>
+            <td></td>
+            <td></td>
+        </tr>
+</table>
+<br />
+@if (Model != null)
+{
+    <span>
+        Page @(Model.PageCount < Model.PageNumber ? 0 : Model.PageNumber) of @Model.PageCount
+
+        @Html.PagedListPager(Model, page => Url.Action("AuthorBooks", new { Name = Model[0].Author, page, size = size }))
+    </span>
+}
