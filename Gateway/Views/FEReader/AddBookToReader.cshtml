@@ -1,0 +1,39 @@
+﻿@model Gateway.Models.Readers.ReadedBook
+
+@{
+    ViewData["Title"] = "AddBookToReader";
+}
+
+<h2>Add book to reader</h2>
+
+<h4>Choose book and reader</h4>
+<hr />
+<div class="row">
+    <div class="col-md-4">
+        <form asp-action="AddBookToReader">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <div class="form-group">
+                <label asp-for="Name" class="control-label"></label>
+                <select asp-for="Name" asp-items="ViewBag.Books">
+                    <option selected="selected" disabled="disabled">Choose book</option>
+                </select>
+                <span asp-validation-for="Name" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Nickname" class="control-label"></label>
+                <select asp-for="Nickname" asp-items="ViewBag.Readers">
+                    <option selected="selected" disabled="disabled">Choose reader</option>
+                </select>
+                <span asp-validation-for="Nickname" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <input type="submit" value="Add book to reader" class="btn btn-default" />
+            </div>
+        </form>
+    </div>
+</div>
+
+<div>
+    <a asp-action="Readers">Back to List</a>
+</div>
+

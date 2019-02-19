@@ -11,6 +11,11 @@ namespace Gateway.Models
         public int Code { get; set; }
         public string Message { get; set; }
 
+        public Error()
+        {
+
+        }
+
         public Error(ObjectResult objectResult)
         {
             Message = "Internal error";

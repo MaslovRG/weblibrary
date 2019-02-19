@@ -1,0 +1,42 @@
+﻿@model X.PagedList.PagedList<Gateway.Models.Authors.Author>
+@using X.PagedList.Mvc.Core;
+@{
+    ViewData["Title"] = "Authors";
+    var size = Context.Request.Query["size"]; 
+}
+
+<h2>@ViewData["Title"]</h2>
+
+<table class="table">
+    <tr>
+        <th>Name</th>
+    </tr>
+
+    @if (Model != null)
+    {
+        foreach (var item in Model)
+        {
+            <tr>
+                <td>
+                    <a asp-action="Author" asp-route-name="@item.Name">@item.Name</a>
+                </td>
+            </tr>
+        }
+    }
+    else
+    {
+        <tr>
+            <td>Authors not found</td>
+        </tr>
+    }
+</table>
+<br />
+@if (Model != null)
+{
+    <span>
+        Page @(Model.PageCount < Model.PageNumber ? 0 : Model.PageNumber) of @Model.PageCount
+
+        @Html.PagedListPager(Model, page => Url.Action("ReaderAuthors", new { Nickname = ViewBag.Nickname, page, size = size }))
+    </span>
+}
+

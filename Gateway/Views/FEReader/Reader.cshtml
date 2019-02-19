@@ -18,5 +18,8 @@
     </dl>
 </div>
 <div>
+    <a asp-action="ReaderBooks" asp-route-nickname="@Model.Nickname">Reader books</a> |
+    <a asp-action="AddBookToReader" asp-route-reader="@Model.Nickname">Add new readed book</a> |
+    <a asp-action="ReaderAuthors" asp-route-nickname="@Model.Nickname">Reader authors</a> |
     <a asp-action="Readers">Back to List</a>
 </div>

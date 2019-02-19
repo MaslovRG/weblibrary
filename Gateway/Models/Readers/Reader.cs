@@ -13,6 +13,5 @@ namespace Gateway.Models.Readers
         [DataType(DataType.Text, ErrorMessage = "Input author name")]
         [RegularExpression(@"[a-zA-Z0-9]+", ErrorMessage = "Input correct nickname (Only letters and numbers are allowed)")]
         public string Nickname { get; set; }
-        public List<string> Books { get; set; }
     }
 }

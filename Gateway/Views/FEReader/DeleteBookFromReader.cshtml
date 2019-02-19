@@ -1,0 +1,31 @@
+﻿@model Gateway.Models.Readers.ReadedBook
+
+@{
+    ViewData["Title"] = "Delete book from reader";
+}
+
+<h2>Delete book from reader</h2>
+
+<h3>Are you sure you want to delete book from reader?</h3>
+<div>
+    <hr />
+    <dl class="dl-horizontal">
+        <dt>
+            @Html.DisplayNameFor(model => model.Name)
+        </dt>
+        <dd>
+            @Html.DisplayFor(model => model.Name)
+        </dd>
+        <dt>
+            @Html.DisplayNameFor(model => model.Nickname)
+        </dt>
+        <dd>
+            @Html.DisplayFor(model => model.Nickname)
+        </dd>
+    </dl>
+    
+    <form asp-action="DeleteBookFromReader">
+        <input type="submit" value="Delete" class="btn btn-default" /> |
+        <a asp-action="Readers">Back to List</a>
+    </form>
+</div>

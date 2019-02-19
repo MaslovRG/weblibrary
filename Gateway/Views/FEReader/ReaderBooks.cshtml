@@ -5,13 +5,14 @@
     var size = Context.Request.Query["size"];
 }
 
-<h2>Books</h2>
+<h2>Books, readed by @ViewBag.Nickname</h2>
 
 <table class="table">
     <tr>
         <th>Title</th>
         <th>Year</th>
         <th>Author</th>
+        <th></th>
     </tr>
 
     @if (Model != null)
@@ -28,6 +29,9 @@
                 <td>
                     <a asp-action="Author" asp-controller="FEAuthor" asp-route-name="@item.Author">@item.Author</a>
                 </td>
+                <td>
+                    <a asp-action="DeleteBookFromReader" asp-route-nickname="@ViewBag.Nickname" asp-route-name="@item.Name" >Delete from reading list</a>
+                </td>
             </tr>
         }
     }
@@ -37,10 +41,12 @@
             <td>Books not found</td>
             <td></td>
             <td></td>
+            <td></td>
         </tr>
     }
         <tr>
-            <td><a asp-action="AddBook">Add new book</a></td>
+            <td><a asp-action="AddBookToReader" asp-route-reader="@ViewBag.Nickname">Add new book to reading list</a></td>
+            <td></td>
             <td></td>
             <td></td>
         </tr>
@@ -51,6 +57,6 @@
     <span>
         Page @(Model.PageCount < Model.PageNumber ? 0 : Model.PageNumber) of @Model.PageCount
 
-        @Html.PagedListPager(Model, page => Url.Action("Books", new { page, size = size }))
+        @Html.PagedListPager(Model, page => Url.Action("ReaderBooks", new { Nickname = ViewBag.Nickname, page, size = size }))
     </span>
 }

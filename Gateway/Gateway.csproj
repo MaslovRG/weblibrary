@@ -40,6 +40,12 @@
     <Content Update="Views\FEReader\AddReader.cshtml">
       <Pack>$(IncludeRazorContentInPack)</Pack>
     </Content>
+    <Content Update="Views\FEReader\ReaderAuthors.cshtml">
+      <Pack>$(IncludeRazorContentInPack)</Pack>
+    </Content>
+    <Content Update="Views\FEReader\ReaderBooks.cshtml">
+      <Pack>$(IncludeRazorContentInPack)</Pack>
+    </Content>
     <Content Update="Views\FEReader\Readers.cshtml">
       <Pack>$(IncludeRazorContentInPack)</Pack>
     </Content>
