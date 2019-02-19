@@ -60,9 +60,9 @@ namespace Gateway.Controllers
         }
 
         [HttpGet("add")]
-        public IActionResult AddBook(string Name, string Author)
+        public IActionResult AddBook(string Name, string Author, int? Year)
         {
-            return View(new Book { Name = Name, Author = Author });
+            return View(new Book { Name = Name, Author = Author, Year = Year });
         }
 
         [HttpPost("add")]
@@ -71,6 +71,30 @@ namespace Gateway.Controllers
             if (book != null && book.Author == "")
                 book.Author = null;             
             var result = await bookController.Post(book);
+            if (result.StatusCode == 200)
+                return RedirectToAction(nameof(Books));
+            return View("Error", new Error(result));
+        }
+
+        [HttpGet("delete/{Name}")]
+        public async Task<IActionResult> DeleteBook(string Name)
+        {
+            var result = await bookController.Get(Name);
+            if (result != null && result.StatusCode == 404)
+                return RedirectToAction(nameof(Books)); 
+            if (result == null || result.StatusCode != 200)
+            {
+                Error error = new Error(result);
+                return View("Error", error);
+            }
+
+            return View(result.Value);
+        }
+
+        [HttpPost("delete/{Name}")]
+        public async Task<IActionResult> DeleteBookAction(string Name)
+        {            
+            var result = await bookController.Delete(Name);
             if (result.StatusCode == 200)
                 return RedirectToAction(nameof(Books));
             return View("Error", new Error(result));
