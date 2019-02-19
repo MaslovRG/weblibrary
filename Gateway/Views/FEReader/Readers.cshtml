@@ -1,0 +1,44 @@
+﻿@model X.PagedList.PagedList<Gateway.Models.Readers.Reader>
+@using X.PagedList.Mvc.Core;
+@{
+    ViewData["Title"] = "Readers";
+}
+
+<h2>@ViewData["Title"]</h2>
+
+<table class="table">
+    <tr>
+        <th>Nickname</th>
+    </tr>
+
+    @if (Model != null)
+    {
+        foreach (var item in Model)
+        {
+            <tr>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Nickname)
+                </td>
+            </tr>
+        }
+    }
+    else
+    {
+        <tr>
+            <td>Readers not found</td>
+        </tr>
+    }
+        <tr>
+            <td><a asp-action="AddReader">Add new reader</a></td>
+        </tr>
+</table>
+<br />
+@if (Model != null)
+{
+    <span>
+    Page @(Model.PageCount< Model.PageNumber ? 0 : Model.PageNumber) of @Model.PageCount
+
+    @Html.PagedListPager(Model, page => Url.Action("Readers", new { page }))
+    </span>
+}
+

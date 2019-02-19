@@ -11,7 +11,7 @@ namespace Gateway.Models.Authors
         [Required]
         [Display(Name = "Name")]
         [DataType(DataType.Text, ErrorMessage = "Input author name")]
-        [RegularExpression(@"[a-zA-Z0-9]+", ErrorMessage = "Input correct author name (Only letters and numbers are allowed)")]
+        [RegularExpression(@"[a-zA-Z0-9 ]+", ErrorMessage = "Input correct author name (Only spaces, letters and numbers are allowed)")]
         public string Name { get; set; }
     }
 }

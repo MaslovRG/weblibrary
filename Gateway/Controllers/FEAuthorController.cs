@@ -13,15 +13,15 @@ namespace Gateway.Controllers
     public class FEAuthorController : Controller
     {
         private AuthorController authorController;
-        private BookController bookController;
-        private ReaderController readerController; 
+        //private BookController bookController;
+        //private ReaderController readerController; 
 
         public FEAuthorController(AuthorController nAC, 
             BookController nBC, ReaderController nRC)
         {
             authorController = nAC;
-            bookController = nBC;
-            readerController = nRC; 
+            //bookController = nBC;
+            //readerController = nRC; 
         }
 
         [HttpGet("")]

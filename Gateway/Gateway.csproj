@@ -16,7 +16,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Views\FEReader\" />
     <Folder Include="wwwroot\" />
   </ItemGroup>
 
@@ -33,6 +32,12 @@
 
   <ItemGroup>
     <Content Update="Views\FEAuthor\Authors.cshtml">
+      <Pack>$(IncludeRazorContentInPack)</Pack>
+    </Content>
+    <Content Update="Views\FEReader\AddReader.cshtml">
+      <Pack>$(IncludeRazorContentInPack)</Pack>
+    </Content>
+    <Content Update="Views\FEReader\Readers.cshtml">
       <Pack>$(IncludeRazorContentInPack)</Pack>
     </Content>
   </ItemGroup>

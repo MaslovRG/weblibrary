@@ -5,36 +5,36 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Gateway.Models;
-using Gateway.Models.Books; 
+using Gateway.Models.Readers; 
 
 namespace Gateway.Controllers
 {
-    [Route("book")]
-    public class FEBookController : Controller
+    [Route("reader")]
+    public class FEReaderController : Controller
     {
         //private AuthorController authorController;
-        private BookController bookController;
-        //private ReaderController readerController;
+        //private BookController bookController;
+        private ReaderController readerController;
 
-        public FEBookController(AuthorController nAC,
+        public FEReaderController(AuthorController nAC,
             BookController nBC, ReaderController nRC)
         {
             //authorController = nAC;
-            bookController = nBC;
-            //readerController = nRC;
+            //bookController = nBC;
+            readerController = nRC;
         }
 
         [HttpGet("")]
-        public async Task<IActionResult> Books(int? page, int? size)
+        public async Task<IActionResult> Readers(int? page, int? size)
         {
             if (page == null || size == null)
             {
                 var nPage = page ?? 1;
                 var nSize = size ?? 2;
-                return Redirect($"/book?page={nPage}&size={nSize}");
+                return Redirect($"/reader?page={nPage}&size={nSize}");
             }
 
-            var result = await bookController.Get(page, size);
+            var result = await readerController.Get(page, size);
             if (result != null && result.StatusCode == 404)
                 return View();
             if (result == null || result.StatusCode != 200)
@@ -47,19 +47,18 @@ namespace Gateway.Controllers
         }
 
         [HttpGet("add")]
-        public IActionResult AddBook(string Name)
+        public IActionResult AddReader(string Nickname)
         {
-            return View(new Book { Name = Name });
+            return View(new Reader { Nickname = Nickname });
         }
 
         [HttpPost("add")]
-        public async Task<IActionResult> AddBook(Book book)
+        public async Task<IActionResult> AddReader(Reader reader)
         {
-            if (book != null && book.Author == "")
-                book.Author = null;             
-            var result = await bookController.Post(book);
+            string Nickname = reader.Nickname; 
+            var result = await readerController.Post(Nickname);
             if (result.StatusCode == 200)
-                return RedirectToAction(nameof(Books));
+                return RedirectToAction(nameof(Readers));
             return View("Error", new Error(result));
         }
     }
