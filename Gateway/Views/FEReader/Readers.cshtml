@@ -18,7 +18,7 @@
         {
             <tr>
                 <td>
-                    @Html.DisplayFor(modelItem => item.Nickname)
+                    <a asp-action="Reader" asp-route-nickname="@item.Nickname">@item.Nickname</a>
                 </td>
             </tr>
         }

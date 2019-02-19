@@ -1,0 +1,22 @@
+﻿@model Gateway.Models.Readers.Reader
+
+@{
+    ViewData["Title"] = "Reader details";
+}
+
+<h2>Reader details</h2>
+
+<div>
+    <hr />
+    <dl class="dl-horizontal">
+        <dt>
+            @Html.DisplayNameFor(model => model.Nickname)
+        </dt>
+        <dd>
+            @Html.DisplayFor(model => model.Nickname)
+        </dd>
+    </dl>
+</div>
+<div>
+    <a asp-action="Readers">Back to List</a>
+</div>

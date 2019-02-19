@@ -46,6 +46,19 @@ namespace Gateway.Controllers
             return View(result.Value);
         }
 
+        [HttpGet("{Nickname}")]
+        public async Task<IActionResult> Reader(string Nickname)
+        {
+            var result = await readerController.Get(Nickname);
+            if (result == null || result.StatusCode != 200)
+            {
+                Error error = new Error(result);
+                return View("Error", error);
+            }
+
+            return View(result.Value);
+        }
+
         [HttpGet("add")]
         public IActionResult AddReader(string Nickname)
         {

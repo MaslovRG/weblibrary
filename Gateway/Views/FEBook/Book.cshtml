@@ -25,7 +25,7 @@
             @Html.DisplayNameFor(model => model.Author)
         </dt>
         <dd>
-            @Html.DisplayFor(model => model.Author)
+            <a asp-action="Author" asp-controller="FEAuthor" asp-route-name="@Model.Author">@Model.Author</a>
         </dd>
     </dl>
 </div>
