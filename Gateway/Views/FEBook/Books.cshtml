@@ -19,13 +19,13 @@
         {
             <tr>
                 <td>
-                    @Html.DisplayFor(modelItem => item.Name)
+                    <a asp-action="Book" asp-route-name="@item.Name">@item.Name</a>
                 </td>
                 <td>
                     @Html.DisplayFor(modelItem => item.Year)
                 </td>
                 <td>
-                    @Html.DisplayFor(modelItem => item.Author)
+                    <a asp-action="Author" asp-controller="FEAuthor" asp-route-name="@item.Author">@item.Author</a>
                 </td>
             </tr>
         }
