@@ -8,7 +8,8 @@ namespace Gateway.Services
 {
     public interface ISessionService
     {
-        Task<Result<TokenValue>> GetToken(User user);
+        Task<Result<string>> GetCode(User user); 
+        Task<Result<TokenValue>> GetToken(SimpleCode Code);
         Task<Result> CheckToken(string AccessToken);
         Task<Result<TokenValue>> Refresh(string RefreshToken); 
     }

@@ -16,9 +16,15 @@ namespace Gateway.Services.Implementation
             base(configuration.GetSection("ServiceAddresses")["SessionService"])
         { }
 
-        public async Task<Result<TokenValue>> GetToken(User user)
+        public async Task<Result<string>> GetCode(User user)
         {
-            var response = await PostJson("get", user);
+            var response = await PostJson("code", user);
+            return await Result<string>.CreateAsync(response);
+        }
+
+        public async Task<Result<TokenValue>> GetToken(SimpleCode Code)
+        {
+            var response = await PostJson("token", Code);
             return await Result<TokenValue>.CreateAsync(response);
         }
 

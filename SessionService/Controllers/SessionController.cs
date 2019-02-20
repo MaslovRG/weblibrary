@@ -13,38 +13,77 @@ namespace SessionService.Controllers
     public class SessionController : ControllerBase
     {
         private UsersContext users;
+        private CodesContext codes; 
         private TokensContext tokens;
         private readonly ILogger<SessionController> _logger;
 
-        public SessionController(UsersContext nUsers, TokensContext nTokens, ILogger<SessionController> nLogger)
+        public SessionController(UsersContext nUsers, CodesContext nCodes,
+            TokensContext nTokens, ILogger<SessionController> nLogger)
         {
             users = nUsers;
+            codes = nCodes; 
             tokens = nTokens; 
-            _logger = nLogger;
+            _logger = nLogger;           
         }
 
-        [HttpPost("get")]
-        public ObjectResult GetToken([FromBody]User user)
+        [HttpPost("code")]
+        public ObjectResult GetSecretCode([FromBody]User user)
         {
-            _logger.LogInformation("Get all authors");
+            _logger.LogInformation("Get token");
             ObjectResult result = null;
             try
             {
                 var pass = SHAConverter.GetHash(user.Password);
                 var dbu = users.Users
-                    .Where(x => x.Username == user.Username && x.Password == pass)
-                    .FirstOrDefault(); 
+                    .FirstOrDefault(x => x.Username == user.Username && x.Password == pass);
                 if (dbu == null)
-                    result = StatusCode(401, "Wrong login or password"); 
+                    result = StatusCode(401, "Wrong login or password");
                 else
                 {
-                    Token token = new Token(dbu);
-                    tokens.Tokens.RemoveRange(tokens.Tokens.Where(x => x.User == dbu.Username));
-                    tokens.SaveChanges(); 
-                    tokens.Tokens.Add(token);                    
-                    tokens.SaveChanges();
-                    TokenValue values = new TokenValue(token); 
-                    return Ok(values); 
+                    Code code = new Code(dbu);
+                    codes.Codes.RemoveRange(codes.Codes.Where(x => x.Username == dbu.Username));
+                    codes.SaveChanges(); 
+                    codes.Add(code);
+                    codes.SaveChanges(); 
+                    result = Ok(code.CodeValue);
+                }
+            }
+            catch
+            {
+                result = StatusCode(500, "Error with session service work");
+            }
+            return result;
+        }
+
+        [HttpPost("token")]
+        public ObjectResult GetToken([FromBody]SimpleCode SimpleCode)
+        {
+            var CodeValue = SimpleCode.CodeValue; 
+            _logger.LogInformation("Get token");
+            ObjectResult result = null;
+            try
+            {
+                var Code = codes.Codes.FirstOrDefault(x => x.CodeValue == CodeValue);              
+
+                if (Code == null)
+                    result = StatusCode(401, "Wrong code value"); 
+                else
+                {
+                    var dbu = users.Users.FirstOrDefault(x => x.Username == Code.Username);
+                    if (dbu == null)
+                        result = StatusCode(401, "User, connected with this code, not found");
+                    else
+                    {
+                        Token token = new Token(dbu);
+                        tokens.Tokens.RemoveRange(tokens.Tokens.Where(x => x.User == Code.Username));
+                        tokens.SaveChanges();
+                        tokens.Tokens.Add(token);
+                        tokens.SaveChanges();
+                        codes.Codes.RemoveRange(codes.Codes.Where(x => x.Username == Code.Username));
+                        codes.SaveChanges(); 
+                        TokenValue values = new TokenValue(token);
+                        result = Ok(values);
+                    }                    
                 }
             }
             catch

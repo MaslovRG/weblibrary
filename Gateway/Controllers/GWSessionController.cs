@@ -36,26 +36,43 @@ namespace Gateway.Controllers
             sessionService = nSessionService;
         }
 
-        [HttpPost("get")]
+        [HttpPost("token")]
         public async Task<ObjectResult> GetToken(User user)
         {
             _logger.LogInformation("Get token");
-            var response = await sessionService.GetToken(user); 
-            
-            if (response == null)
+            var response1 = await sessionService.GetCode(user);
+
+            if (response1 == null)
             {
                 _logger.LogInformation("Session service unavaliable");
-                return StatusCode(503, "Session service unavaliable"); 
+                return StatusCode(503, "Session service unavaliable");
             }
 
-            if (response.Code != 200)
+            if (response1.Code != 200)
+            {
+                _logger.LogInformation("Can't get secret code");
+                return StatusCode(response1.Code, response1.Message);
+            }
+
+            var response2 = await sessionService.GetToken(new SimpleCode()
+            {
+                CodeValue = response1.Message
+            });
+
+            if (response2 == null)
+            {
+                _logger.LogInformation("Session service unavaliable");
+                return StatusCode(503, "Session service unavaliable");
+            }
+
+            if (response2.Code != 200)
             {
                 _logger.LogInformation("Can't get token");
-                return StatusCode(response.Code, response.Message);
+                return StatusCode(response2.Code, response2.Message);
             }
 
             _logger.LogInformation("Succesfully get token");
-            return Ok(response.Value);
+            return Ok(response2.Value);
         }
 
         [HttpPost("check")]
