@@ -92,16 +92,6 @@ namespace Gateway.Services.Implementation
 
             var response = await Delete($"{Nickname}/book/{Name}");
             return await Result.CreateAsync(response);
-        }
-
-        public Result GetErrorNT()
-        {
-            return new Result() { Code = 500, Message = "Can't authorized on reader service. Reload page" };
-        }
-
-        public Result<T> GetError<T>()
-        {
-            return new Result<T>() { Code = 500, Message = "Can't authorized on reader service. Reload page", Value = default(T) };
-        }
+        }        
     }
 }

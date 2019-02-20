@@ -12,13 +12,16 @@ namespace BookService.Controllers
     [ApiController]
     public class BookController : ControllerBase
     {
-        private BooksContext database; 
+        private BooksContext database;
+        private TokensContext tokens; 
         private readonly ILogger<BookController> _logger; 
 
-        public BookController(BooksContext nDatabase, ILogger<BookController> nLogger)
+        public BookController(BooksContext nDatabase, TokensContext nTokens,
+            ILogger<BookController> nLogger)
         {
-            _logger = nLogger;
-            database = nDatabase; 
+            database = nDatabase;
+            tokens = nTokens; 
+            _logger = nLogger;            
         }
 
         // GET api/values
@@ -193,6 +196,58 @@ namespace BookService.Controllers
                 _logger.LogError(message);
             }
             return result;
+        }
+
+        [HttpGet("token/check/{token}")]
+        public ObjectResult CheckToken(string token)
+        {
+            _logger.LogInformation("Check token");
+            try
+            {
+                var stoken = tokens.Tokens.FirstOrDefault(x => x.Value == token);
+                if (stoken == null)
+                    return StatusCode(401, "Token not found");
+                if (stoken.Expirity <= DateTime.Now)
+                {
+                    tokens.Tokens.Remove(stoken);
+                    tokens.SaveChanges();
+                    return StatusCode(401, "Token is die");
+                }
+            }
+            catch
+            {
+                return StatusCode(500, "Error while checking token");
+            }
+
+            return Ok("Token checked");
+        }
+
+        [HttpPost("token/get")]
+        public ObjectResult GetToken(ServiceInfo info)
+        {
+            _logger.LogInformation("Get new token");
+            try
+            {
+                if (info.AppId == "book002" && info.AppSecret == "um8tfBw7di4Ueekf")
+                {
+                    Token token = new Token()
+                    {
+                        Value = SHAConverter.GetHash(DateTime.Now.ToString()),
+                        Expirity = DateTime.Now.AddHours(2)
+                    };
+                    tokens.Tokens.Add(token);
+                    tokens.SaveChanges();
+                    return Ok(token.Value);
+                }
+                else
+                {
+                    return StatusCode(401, "Your app dates is false");
+                }
+            }
+            catch
+            {
+                return StatusCode(500, "Error while getting token");
+            }
         }
     }
 }

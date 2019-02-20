@@ -34,6 +34,9 @@ namespace BookService
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+            services.AddDbContext<TokensContext>(options =>
+                options.UseInMemoryDatabase("Token")); 
+
             services.AddDbContext<BooksContext>(options =>
                 //options.UseSqlServer(Configuration.GetConnectionString("ConnectionDB"))); 
                 options.UseInMemoryDatabase("Book")); 
