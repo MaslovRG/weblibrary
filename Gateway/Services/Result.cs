@@ -65,15 +65,18 @@ namespace Gateway.Services
             }
             else
             {
-                try
+                if ((int)response.StatusCode == 200)
                 {
-                    result.Value = JsonConvert.DeserializeObject<T>(await response.Content.ReadAsStringAsync());
-                }
-                catch
-                {
-                    result.Value = default(T);
-                }
-                if (result.Value == null || result.Value.Equals(default(T)))
+                    try
+                    {
+                        result.Value = JsonConvert.DeserializeObject<T>(await response.Content.ReadAsStringAsync());
+                    }
+                    catch
+                    {
+                        result.Value = default(T);
+                    }
+                }                
+                if (result.Value == null || result.Value.Equals(default(T)) || (int)response.StatusCode != 200)
                 {
                     try
                     {

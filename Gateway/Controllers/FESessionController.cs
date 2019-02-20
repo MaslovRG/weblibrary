@@ -24,10 +24,11 @@ namespace Gateway.Controllers
         }
 
         [HttpGet]
-        public IActionResult Login([FromQuery]int? code, [FromQuery]string message)
+        public IActionResult Login([FromQuery]int? code, [FromQuery]string message, [FromQuery]string redirect)
         {
             ViewBag.Code = code;
             ViewBag.Message = message;
+            ViewBag.Redirect = redirect; 
             return View();
         }
 
@@ -42,13 +43,15 @@ namespace Gateway.Controllers
                     return RedirectToAction(nameof(Login), new
                     {
                         code = 500,
-                        message = "Internal error"
+                        message = "Internal error",
+                        redirect
                     });
                 else
                     return RedirectToAction(nameof(Login), new
                     {
                         code = result.StatusCode,
-                        message = result.Value
+                        message = result.Value,
+                        redirect
                     }); 
             }
 
@@ -61,7 +64,7 @@ namespace Gateway.Controllers
             {
                 Expires = tokens.ExpiritRefresh
             });
-            redirect = redirect ?? "/author";
+            redirect = redirect ?? "/book";
             return Redirect(redirect); 
         }
 
@@ -71,20 +74,8 @@ namespace Gateway.Controllers
             var RefreshToken = Request.Cookies["RefreshToken"]; 
             var result = await sessionController.Refresh(RefreshToken);
             if (result == null || result.StatusCode != 200)
-            {
-                if (result == null)
-                    return RedirectToAction(nameof(Login), new
-                    {
-                        code = 500,
-                        message = "Internal error"
-                    });
-                else
-                    return RedirectToAction(nameof(Login), new
-                    {
-                        code = result.StatusCode,
-                        message = result.Value
-                    });
-            }
+                return RedirectToAction(nameof(Login), new { redirect });
+
             TokenValue tokens = (TokenValue)result.Value;
             HttpContext.Response.Cookies.Append("AccessToken", tokens.AccessToken, new CookieOptions
             {
@@ -94,7 +85,7 @@ namespace Gateway.Controllers
             {
                 Expires = tokens.ExpiritRefresh
             });
-            redirect = redirect ?? "/author";
+            redirect = redirect ?? "/book";
             return Redirect(redirect);
         }        
     }

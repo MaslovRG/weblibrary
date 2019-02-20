@@ -15,13 +15,16 @@ namespace Gateway.Controllers
         private AuthorController authorController;
         //private BookController bookController;
         //private ReaderController readerController; 
+        private SessionController sessionController; 
 
         public FEAuthorController(AuthorController nAC, 
-            BookController nBC, ReaderController nRC)
+            BookController nBC, ReaderController nRC,
+            SessionController nSC)
         {
             authorController = nAC;
             //bookController = nBC;
             //readerController = nRC; 
+            sessionController = nSC; 
         }
 
         [HttpGet("")]
@@ -33,6 +36,16 @@ namespace Gateway.Controllers
                 var nSize = size ?? 2;
                 return Redirect($"/author?page={nPage}&size={nSize}");
             }
+
+            var accessToken = Request.Cookies["AccessToken"]; 
+            var response = await sessionController.CheckToken(accessToken);
+            if (response == null || response.StatusCode != 200)
+            {
+                return RedirectToAction("Refresh", "FESession", new
+                {
+                    redirect = $"/author?page={page}&size={size}"
+                });
+            }            
 
             var result = await authorController.Get(page, size);
             if (result != null && result.StatusCode == 404)
@@ -49,6 +62,16 @@ namespace Gateway.Controllers
         [HttpGet("{Name}")]
         public async Task<IActionResult> Author(string Name)
         {
+            var accessToken = Request.Cookies["AccessToken"];
+            var response = await sessionController.CheckToken(accessToken);
+            if (response == null || response.StatusCode != 200)
+            {
+                return RedirectToAction("Refresh", "FESession", new
+                {
+                    redirect = $"/author/{Name}"
+                });
+            }
+
             var result = await authorController.Get(Name); 
             if (result == null || result.StatusCode != 200)
             {
@@ -60,14 +83,33 @@ namespace Gateway.Controllers
         }
 
         [HttpGet("add")]
-        public IActionResult AddAuthor(string Name)
+        public async Task<IActionResult> AddAuthor(string Name)
         {
+            var accessToken = Request.Cookies["AccessToken"];
+            var response = await sessionController.CheckToken(accessToken);
+            if (response == null || response.StatusCode != 200)
+            {
+                return RedirectToAction("Refresh", "FESession", new
+                {
+                    redirect = $"/author/add?Name={Name}"
+                });
+            }
             return View(new Author { Name = Name }); 
         }
 
         [HttpPost("add")]
         public async Task<IActionResult> AddAuthor(Author author)
         {
+            var accessToken = Request.Cookies["AccessToken"];
+            var response = await sessionController.CheckToken(accessToken);
+            if (response == null || response.StatusCode != 200)
+            {
+                return RedirectToAction("Refresh", "FESession", new
+                {
+                    redirect = $"/author/add"
+                });
+            }
+
             var result = await authorController.Post(author); 
             if (result.StatusCode == 200)
                 return RedirectToAction(nameof(Authors));

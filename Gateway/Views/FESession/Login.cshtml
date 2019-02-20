@@ -30,7 +30,15 @@
                 <span asp-validation-for="Password" class="text-danger"></span>
             </div>
             <div class="form-group">
-                <input type="submit" value="Login" class="btn btn-default" />
+                @if (ViewBag.Redirect != null)
+                {
+                    <input type="submit" value="Login" class="btn btn-default" asp-route-redirect="@ViewBag.Redirect" />
+                }
+                else
+                {
+                    <input type="submit" value="Login" class="btn btn-default" />
+                }
+
             </div>
         </form>
     </div>
