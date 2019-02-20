@@ -11,11 +11,12 @@ using X.PagedList;
 namespace Gateway.Controllers
 {
     [Route("api/author")]
-    [ApiController]
+    [ApiController]    
     public class AuthorController : ControllerBase
     {
         private readonly ILogger<AuthorController> _logger;
         private IAuthorService authorService;
+        private ISessionService sessionService; 
         private SupportingFunctions sup; 
 
         public AuthorController(ILogger<AuthorController> nLogger,
@@ -27,7 +28,7 @@ namespace Gateway.Controllers
         }
 
         // GET: author?page=1&size=5
-        [HttpGet]
+        [HttpGet]        
         // ObjectResult<PagedList<Author>>
         public async Task<ObjectResult> Get(int? page, int? size)
         {

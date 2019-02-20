@@ -10,39 +10,39 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
+using Microsoft.EntityFrameworkCore;
+using SessionService.Models; 
 using System.Diagnostics.CodeAnalysis;
-using Gateway.Services;
-using Gateway.Controllers; 
-using Gateway.Services.Implementation; 
 
-namespace Gateway
+namespace AuthorService
 {
     [ExcludeFromCodeCoverage]
     public class Startup
     {
+        [ExcludeFromCodeCoverage]
         public Startup(IConfiguration configuration)
         {
             Configuration = configuration;
         }
 
+        [ExcludeFromCodeCoverage]
         public IConfiguration Configuration { get; }
 
+        [ExcludeFromCodeCoverage]
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddSingleton<IBookService, BookService>();
-            services.AddSingleton<IAuthorService, AuthorService>();
-            services.AddSingleton<IReaderService, ReaderService>();
-            services.AddSingleton<ISessionService, SessionService>(); 
+            services.AddDbContext<TokensContext>(options =>
+                options.UseInMemoryDatabase("Token")); 
 
-            services.AddSingleton<AuthorController>();
-            services.AddSingleton<BookController>();
-            services.AddSingleton<ReaderController>();
-            services.AddSingleton<SessionController>(); 
+            services.AddDbContext<UsersContext>(options =>
+                options.UseInMemoryDatabase("User")); 
 
-            services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
+            services.AddMvc()
+                .SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
         }
 
+        [ExcludeFromCodeCoverage]
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IHostingEnvironment env)
         {
@@ -52,7 +52,6 @@ namespace Gateway
             }
             
             app.UseMvc();
-            app.UseStaticFiles(); 
         }
     }
 }
