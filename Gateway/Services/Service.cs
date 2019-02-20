@@ -81,24 +81,25 @@ namespace Gateway.Services
             }
         }
 
-        protected async Task<Result<string>> CheckToken()
+        protected async Task<Result> CheckToken()
         {
-            var response = await PostJson("token/check", token);
-            Result<string> result = null; 
+            var response = await Get($"token/check/{token}");
+            Result result = new Result() { Code = 500, Message = "Can't get token" };
             if (response == null || (int)response.StatusCode != 200)
             {
-                response = await PostJson("token/get", appInfo); 
+                response = await PostJson("token/get", appInfo);
                 if (response != null && (int)response.StatusCode == 200)
                 {
-                    result = await Result<string>.CreateAsync(response);
-                    if (result.Code == 200)
+                    var tokenResult = await Result<string>.CreateAsync(response);
+                    if (tokenResult.Code == 200)
                     {
-                        token = result.Value; 
+                        token = tokenResult.Message;
+                        result = new Result() { Code = 200, Message = "Token succesfully get" };
                     }
                 }
             }
-            if (result == null)
-                result = await Result<string>.CreateAsync(response); 
+            else
+                result = new Result() { Code = 200, Message = "Token succesfully check" };             
             return result; 
         }
     }
