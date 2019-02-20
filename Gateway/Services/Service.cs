@@ -6,6 +6,7 @@ using System.Net.Http;
 using Newtonsoft.Json;
 using Gateway.Models.Books;
 using System.Net;
+using System.Text;
 
 namespace Gateway.Services
 {
@@ -29,14 +30,16 @@ namespace Gateway.Services
 
         protected async Task<HttpResponseMessage> PostJson<T>(string url, T obj)
         {
-            using (var handler = new HttpClientHandler() { CookieContainer = new CookieContainer() })
+            using (var handler = new HttpClientHandler() { UseCookies = false })
             using (var client = new HttpClient(handler))
             {
                 try
                 {
+                    var message = new HttpRequestMessage(HttpMethod.Post, GetFullAddressByUrl(url));
+                    message.Content = new StringContent(JsonConvert.SerializeObject(obj), Encoding.UTF8, "application/json");
                     if (token != null && token.Value != null)
-                        handler.CookieContainer.Add(new Cookie("appToken", token.Value)); 
-                    return await client.PostAsJsonAsync(GetFullAddressByUrl(url), obj);
+                        message.Headers.Add("Coockies", $"appToken={token.Value}");
+                    return await client.SendAsync(message);
                 }
                 catch
                 {
@@ -47,14 +50,15 @@ namespace Gateway.Services
 
         protected async Task<HttpResponseMessage> Get(string url)
         {
-            using (var handler = new HttpClientHandler() { CookieContainer = new CookieContainer() })
+            using (var handler = new HttpClientHandler() { UseCookies = false })
             using (var client = new HttpClient(handler) { BaseAddress = BA })
             {
                 try
                 {
+                    var message = new HttpRequestMessage(HttpMethod.Get, GetFullAddressByUrl(url)); 
                     if (token != null && token.Value != null)
-                        handler.CookieContainer.Add(BA, new Cookie("appToken", token.Value));
-                    return await client.GetAsync(GetFullAddressByUrl(url));
+                        message.Headers.Add("Coockies", $"appToken={token.Value};");
+                    return await client.SendAsync(message);
                 }
                 catch
                 {
@@ -65,16 +69,16 @@ namespace Gateway.Services
 
         protected async Task<HttpResponseMessage> Delete(string url)
         {
-            using (var handler = new HttpClientHandler() { CookieContainer = new CookieContainer() })
+            using (var handler = new HttpClientHandler() { UseCookies = false })
             using (var client = new HttpClient(handler) { BaseAddress = BA })
             {
                 try
-                {
+                { 
+                    var message = new HttpRequestMessage(HttpMethod.Delete, GetFullAddressByUrl(url));
                     if (token != null && token.Value != null)
-                        handler.CookieContainer.Add(BA, new Cookie("appToken", token.Value));
-                    return await client.DeleteAsync(GetFullAddressByUrl(url)); 
-                    /*var message = new HttpRequestMessage(HttpMethod.Delete, url);
-                    message.Headers.Add("Coockies", $"appToken=")*/
+                        message.Headers.Add("Coockie", $"appToken={token.Value}");
+                    return await client.SendAsync(message); 
+                            
                 }
                 catch
                 {
@@ -97,7 +101,7 @@ namespace Gateway.Services
 
         protected async Task<Result> CheckToken()
         {
-            var response = await Get($"token/check/{token}");
+            var response = await Get($"token/check/{token?.Value}");
             Result result = new Result() { Code = 500, Message = "Can't get token" };
             if (response == null || (int)response.StatusCode != 200)
             {
@@ -119,12 +123,12 @@ namespace Gateway.Services
 
         public Result GetErrorNT()
         {
-            return new Result() { Code = 500, Message = "Can't authorized on reader service. Reload page" };
+            return new Result() { Code = 500, Message = "Can't authorized on service. Reload page" };
         }
 
         public Result<T> GetError<T>()
         {
-            return new Result<T>() { Code = 500, Message = "Can't authorized on reader service. Reload page", Value = default(T) };
+            return new Result<T>() { Code = 500, Message = "Can't authorized on service. Reload page", Value = default(T) };
         }
     }
 }
