@@ -25,9 +25,12 @@ namespace Gateway.Services.Implementation
 
         public async Task<Result<List<Book>>> GetBooks()
         {
-            var result = await CheckToken();
-            if (result == null || result.Code != 200)
-                return GetError<List<Book>>();
+            if (token == null || token.Expirity < DateTime.Now)
+            {
+                var result = await CheckToken();
+                if (result == null || result.Code != 200)
+                    return GetError<List<Book>>();
+            }
 
             var response = await Get("");
             return await Result<List<Book>>.CreateAsync(response);
@@ -35,9 +38,12 @@ namespace Gateway.Services.Implementation
 
         public async Task<Result<Book>> GetBook(string Name)
         {
-            var result = await CheckToken();
-            if (result == null || result.Code != 200)
-                return GetError<Book>();
+            if (token == null || token.Expirity < DateTime.Now)
+            {
+                var result = await CheckToken();
+                if (result == null || result.Code != 200)
+                    return GetError<Book>();
+            }
 
             var response = await Get(Name);
             return await Result<Book>.CreateAsync(response);
@@ -45,9 +51,12 @@ namespace Gateway.Services.Implementation
 
         public async Task<Result> AddBook(Book Book)
         {
-            var result = await CheckToken();
-            if (result == null || result.Code != 200)
-                return GetErrorNT();
+            if (token == null || token.Expirity < DateTime.Now)
+            {
+                var result = await CheckToken();
+                if (result == null || result.Code != 200)
+                    return GetErrorNT();
+            }
 
             var response = await PostJson("", Book);
             return await Result.CreateAsync(response); 
@@ -55,9 +64,12 @@ namespace Gateway.Services.Implementation
 
         public async Task<Result> DeleteBook(string Name)
         {
-            var result = await CheckToken();
-            if (result == null || result.Code != 200)
-                return GetErrorNT();
+            if (token == null || token.Expirity < DateTime.Now)
+            {
+                var result = await CheckToken();
+                if (result == null || result.Code != 200)
+                    return GetErrorNT();
+            }
 
             var response = await Delete(Name);
             return await Result.CreateAsync(response); 
@@ -65,9 +77,12 @@ namespace Gateway.Services.Implementation
 
         public async Task<Result<List<Book>>> GetBooksByAuthor(string Author)
         {
-            var result = await CheckToken();
-            if (result == null || result.Code != 200)
-                return GetError<List<Book>>();
+            if (token == null || token.Expirity < DateTime.Now)
+            {
+                var result = await CheckToken();
+                if (result == null || result.Code != 200)
+                    return GetError<List<Book>>();
+            }
 
             var response = await Get($"author/{Author}");
             return await Result<List<Book>>.CreateAsync(response);

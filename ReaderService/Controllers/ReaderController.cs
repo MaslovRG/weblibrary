@@ -336,7 +336,7 @@ namespace ReaderService.Controllers
                     };
                     tokens.Tokens.Add(token);
                     tokens.SaveChanges();
-                    return Ok(token.Value);
+                    return Ok(token);
                 }
                 else
                 {
@@ -347,6 +347,12 @@ namespace ReaderService.Controllers
             {
                 return StatusCode(500, "Error while getting token"); 
             } 
+        }
+
+        private bool Check(string token)
+        {
+            var stoken = tokens.Tokens.FirstOrDefault(x => x.Value == token);
+            return stoken == null || stoken.Expirity <= DateTime.Now;
         }
     }
 }

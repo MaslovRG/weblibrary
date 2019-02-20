@@ -25,9 +25,12 @@ namespace Gateway.Services.Implementation
 
         public async Task<Result<List<Author>>> GetAuthors()
         {
-            var result = await CheckToken();
-            if (result == null || result.Code != 200)
-                return GetError<List<Author>>();
+            if (token == null || token.Expirity < DateTime.Now)
+            {
+                var result = await CheckToken();
+                if (result == null || result.Code != 200)
+                    return GetError<List<Author>>();
+            }           
 
             var response = await Get("");
             return await Result<List<Author>>.CreateAsync(response);  
@@ -35,9 +38,12 @@ namespace Gateway.Services.Implementation
 
         public async Task<Result<Author>> GetAuthor(string Name)
         {
-            var result = await CheckToken();
-            if (result == null || result.Code != 200)
-                return GetError<Author>();
+            if (token == null || token.Expirity < DateTime.Now)
+            {
+                var result = await CheckToken();
+                if (result == null || result.Code != 200)
+                    return GetError<Author>();
+            }
 
             var response = await Get(Name);
             return await Result<Author>.CreateAsync(response);
@@ -45,9 +51,12 @@ namespace Gateway.Services.Implementation
 
         public async Task<Result> AddAuthor(Author Author)
         {
-            var result = await CheckToken();
-            if (result == null || result.Code != 200)
-                return GetErrorNT();
+            if (token == null || token.Expirity < DateTime.Now)
+            {
+                var result = await CheckToken();
+                if (result == null || result.Code != 200)
+                    return GetErrorNT();
+            }
 
             var response = await PostJson("", Author);
             return await Result.CreateAsync(response); 

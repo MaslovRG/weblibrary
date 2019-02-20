@@ -4,19 +4,22 @@ using System.Linq;
 using System.Threading.Tasks;
 using System.Net.Http;
 using Newtonsoft.Json;
-using Gateway.Models.Books; 
+using Gateway.Models.Books;
+using System.Net;
 
 namespace Gateway.Services
 {
     public class Service
     {
         private readonly string baseAddress;
+        private readonly Uri BA; 
         protected ServiceInfo appInfo; 
-        protected string token; 
+        protected Token token; 
 
         public Service(string nBaseAddress)
         {
-            baseAddress = nBaseAddress;  
+            baseAddress = nBaseAddress;
+            BA = new Uri(nBaseAddress); 
         }
 
         private string GetFullAddressByUrl(string url)
@@ -26,10 +29,13 @@ namespace Gateway.Services
 
         protected async Task<HttpResponseMessage> PostJson<T>(string url, T obj)
         {
-            using (var client = new HttpClient())
+            using (var handler = new HttpClientHandler() { CookieContainer = new CookieContainer() })
+            using (var client = new HttpClient(handler))
             {
                 try
                 {
+                    if (token != null && token.Value != null)
+                        handler.CookieContainer.Add(new Cookie("appToken", token.Value)); 
                     return await client.PostAsJsonAsync(GetFullAddressByUrl(url), obj);
                 }
                 catch
@@ -41,10 +47,13 @@ namespace Gateway.Services
 
         protected async Task<HttpResponseMessage> Get(string url)
         {
-            using (var client = new HttpClient())
+            using (var handler = new HttpClientHandler() { CookieContainer = new CookieContainer() })
+            using (var client = new HttpClient(handler) { BaseAddress = BA })
             {
                 try
                 {
+                    if (token != null && token.Value != null)
+                        handler.CookieContainer.Add(BA, new Cookie("appToken", token.Value));
                     return await client.GetAsync(GetFullAddressByUrl(url));
                 }
                 catch
@@ -56,11 +65,16 @@ namespace Gateway.Services
 
         protected async Task<HttpResponseMessage> Delete(string url)
         {
-            using (var client = new HttpClient())
+            using (var handler = new HttpClientHandler() { CookieContainer = new CookieContainer() })
+            using (var client = new HttpClient(handler) { BaseAddress = BA })
             {
                 try
                 {
+                    if (token != null && token.Value != null)
+                        handler.CookieContainer.Add(BA, new Cookie("appToken", token.Value));
                     return await client.DeleteAsync(GetFullAddressByUrl(url)); 
+                    /*var message = new HttpRequestMessage(HttpMethod.Delete, url);
+                    message.Headers.Add("Coockies", $"appToken=")*/
                 }
                 catch
                 {
@@ -90,10 +104,10 @@ namespace Gateway.Services
                 response = await PostJson("token/get", appInfo);
                 if (response != null && (int)response.StatusCode == 200)
                 {
-                    var tokenResult = await Result<string>.CreateAsync(response);
+                    var tokenResult = await Result<Token>.CreateAsync(response);
                     if (tokenResult.Code == 200)
                     {
-                        token = tokenResult.Message;
+                        token = tokenResult.Value;
                         result = new Result() { Code = 200, Message = "Token succesfully get" };
                     }
                 }
