@@ -16,7 +16,7 @@ namespace Gateway.Controllers
     {
         private readonly ILogger<AuthorController> _logger;
         private IAuthorService authorService;
-        private ISessionService sessionService; 
+        //private ISessionService sessionService; 
         private SupportingFunctions sup; 
 
         public AuthorController(ILogger<AuthorController> nLogger,

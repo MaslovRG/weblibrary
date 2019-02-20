@@ -11,6 +11,8 @@ namespace Gateway.Services
     public class Service
     {
         private readonly string baseAddress;
+        protected ServiceInfo appInfo; 
+        protected string token; 
 
         public Service(string nBaseAddress)
         {
@@ -77,6 +79,27 @@ namespace Gateway.Services
             {
                 return default(T);
             }
+        }
+
+        protected async Task<Result<string>> CheckToken()
+        {
+            var response = await PostJson("token/check", token);
+            Result<string> result = null; 
+            if (response == null || (int)response.StatusCode != 200)
+            {
+                response = await PostJson("token/get", appInfo); 
+                if (response != null && (int)response.StatusCode == 200)
+                {
+                    result = await Result<string>.CreateAsync(response);
+                    if (result.Code == 200)
+                    {
+                        token = result.Value; 
+                    }
+                }
+            }
+            if (result == null)
+                result = await Result<string>.CreateAsync(response); 
+            return result; 
         }
     }
 }

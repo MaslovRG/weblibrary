@@ -11,10 +11,18 @@ using Gateway.Models.Readers;
 namespace Gateway.Services.Implementation
 {
     public class ReaderService : Service, IReaderService
-    {
+    {     
+
         public ReaderService(IConfiguration configuration) :
             base(configuration.GetSection("ServiceAddresses")["ReaderService"])
-        { }
+        {
+            appInfo = new ServiceInfo()
+            {
+                AppId = configuration.GetSection("ReaderService")["appId"],
+                AppSecret = configuration.GetSection("ReaderService")["appSecret"]
+            };            
+            token = null; 
+        }
 
         public async Task<Result<List<Reader>>> GetReaders()
         {
