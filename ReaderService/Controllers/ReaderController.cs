@@ -31,7 +31,10 @@ namespace ReaderService.Controllers
         [ProducesResponseType(200)]
         // ObjectResult<IEnumerable<ReaderOutput>>
         public ObjectResult Get()
-        {            
+        {
+            var token = HttpContext.Request.Headers["Authorization"];
+            if (token.Count < 1 || Check(token[0].Substring(7).TrimEnd(';')))
+                return StatusCode(401, "Bad token"); 
             _logger.LogInformation("Get all readers");
             string message; 
             ObjectResult result;
@@ -82,6 +85,9 @@ namespace ReaderService.Controllers
         // ObjectResult<ReaderOutput>
         public ObjectResult Get(string Nickname)
         {
+            var token = HttpContext.Request.Headers["Authorization"];
+            if (token.Count < 1 || Check(token[0].Substring(7).TrimEnd(';')))
+                return StatusCode(401, "Bad token");
             _logger.LogInformation($"Get book with name: {Nickname}");
             string message; 
             ObjectResult result;
@@ -128,6 +134,9 @@ namespace ReaderService.Controllers
         [ProducesResponseType(200)]
         public ObjectResult Post([FromBody] string Nickname)
         {
+            var token = HttpContext.Request.Headers["Authorization"];
+            if (token.Count < 1 || Check(token[0].Substring(7).TrimEnd(';')))
+                return StatusCode(401, "Bad token");
             _logger.LogInformation($"Add reader: {Nickname}");
             string message; 
             ObjectResult result;
@@ -160,6 +169,9 @@ namespace ReaderService.Controllers
         // ObjectResult<IEnumerable<string>>
         public ObjectResult GetReaderBooks(string Nickname)
         {
+            var token = HttpContext.Request.Headers["Authorization"];
+            if (token.Count < 1 || Check(token[0].Substring(7).TrimEnd(';')))
+                return StatusCode(401, "Bad token");
             _logger.LogInformation($"Get all books of reader: {Nickname}");
             string message; 
             ObjectResult result;
@@ -198,6 +210,9 @@ namespace ReaderService.Controllers
         [ProducesResponseType(200)]
         public ObjectResult DeleteBook(string Name)
         {
+            var token = HttpContext.Request.Headers["Authorization"];
+            if (token.Count < 1 || Check(token[0].Substring(7).TrimEnd(';')))
+                return StatusCode(401, "Bad token");
             _logger.LogInformation($"Delete from all lists book: {Name}");
             string message; 
             ObjectResult result;
@@ -225,6 +240,9 @@ namespace ReaderService.Controllers
         [ProducesResponseType(200)]
         public ObjectResult AddReaderBook([FromBody] string Name, string Nickname)
         {
+            var token = HttpContext.Request.Headers["Authorization"];
+            if (token.Count < 1 || Check(token[0].Substring(7).TrimEnd(';')))
+                return StatusCode(401, "Bad token");
             _logger.LogInformation($"Add book {Name} to reader {Nickname}");
             string message; 
             ObjectResult result;
@@ -265,6 +283,9 @@ namespace ReaderService.Controllers
         [ProducesResponseType(200)]
         public ObjectResult DeleteReaderBook(string Nickname, string Name)
         {
+            var token = HttpContext.Request.Headers["Authorization"];
+            if (token.Count < 1 || Check(token[0].Substring(7).TrimEnd(';')))
+                return StatusCode(401, "Bad token");
             _logger.LogInformation($"Delete book {Name} from reader {Nickname}");
             string message; 
             ObjectResult result;

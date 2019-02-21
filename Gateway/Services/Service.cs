@@ -38,7 +38,7 @@ namespace Gateway.Services
                     var message = new HttpRequestMessage(HttpMethod.Post, GetFullAddressByUrl(url));
                     message.Content = new StringContent(JsonConvert.SerializeObject(obj), Encoding.UTF8, "application/json");
                     if (token != null && token.Value != null)
-                        message.Headers.Add("Coockies", $"appToken={token.Value}");
+                        message.Headers.Add("Authorization", $"Bearer {token.Value}");
                     return await client.SendAsync(message);
                 }
                 catch
@@ -57,7 +57,7 @@ namespace Gateway.Services
                 {
                     var message = new HttpRequestMessage(HttpMethod.Get, GetFullAddressByUrl(url)); 
                     if (token != null && token.Value != null)
-                        message.Headers.Add("Coockies", $"appToken={token.Value};");
+                        message.Headers.Add("Authorization", $"Bearer {token.Value};");
                     return await client.SendAsync(message);
                 }
                 catch
@@ -76,7 +76,7 @@ namespace Gateway.Services
                 { 
                     var message = new HttpRequestMessage(HttpMethod.Delete, GetFullAddressByUrl(url));
                     if (token != null && token.Value != null)
-                        message.Headers.Add("Coockie", $"appToken={token.Value}");
+                        message.Headers.Add("Authorization", $"Bearer {token.Value}");
                     return await client.SendAsync(message); 
                             
                 }

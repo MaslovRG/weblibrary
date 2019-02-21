@@ -38,7 +38,8 @@ namespace Gateway
             services.AddSingleton<AuthorController>();
             services.AddSingleton<BookController>();
             services.AddSingleton<ReaderController>();
-            services.AddSingleton<SessionController>(); 
+            services.AddSingleton<SessionController>();
+            services.AddSingleton<AllController>(); 
 
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
         }

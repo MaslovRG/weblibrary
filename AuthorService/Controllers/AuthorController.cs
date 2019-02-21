@@ -32,6 +32,9 @@ namespace AuthorService.Controllers
         // ObjectResult<IEnumerable<Author>>
         public ObjectResult Get()
         {
+            var token = HttpContext.Request.Headers["Authorization"];
+            if (token.Count < 1 || Check(token[0].Substring(7).TrimEnd(';')))
+                return StatusCode(401, "Bad token");
             _logger.LogInformation("Get all authors");
             string message; 
             ObjectResult result;
@@ -67,6 +70,9 @@ namespace AuthorService.Controllers
         // ObjectResult<Author>
         public ObjectResult Get(string Name)
         {
+            var token = HttpContext.Request.Headers["Authorization"];
+            if (token.Count < 1 || Check(token[0].Substring(7).TrimEnd(';')))
+                return StatusCode(401, "Bad token");
             _logger.LogInformation($"Get author with name: {Name}");
             string message; 
             ObjectResult result;
@@ -101,6 +107,9 @@ namespace AuthorService.Controllers
         [ProducesResponseType(200)]
         public ObjectResult Post([FromBody]Author author)
         {
+            var token = HttpContext.Request.Headers["Authorization"];
+            if (token.Count < 1 || Check(token[0].Substring(7).TrimEnd(';')))
+                return StatusCode(401, "Bad token");
             _logger.LogInformation($"Add author: {author.Name}");
             string message; 
             ObjectResult result;
@@ -126,7 +135,7 @@ namespace AuthorService.Controllers
 
         [HttpGet("token/check/{token}")]
         public ObjectResult CheckToken(string token)
-        {
+        {            
             _logger.LogInformation("Check token");
             try
             {

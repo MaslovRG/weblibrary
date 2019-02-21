@@ -32,6 +32,9 @@ namespace BookService.Controllers
         // ObjectResult<IEnumerable<Book>>
         public ObjectResult Get()
         {
+            var token = HttpContext.Request.Headers["Authorization"];
+            if (token.Count < 1 || Check(token[0].Substring(7).TrimEnd(';')))
+                return StatusCode(401, "Bad token");
             _logger.LogInformation("Get all books");
             string message; 
             ObjectResult result; 
@@ -68,6 +71,9 @@ namespace BookService.Controllers
         // ObjectResult<Book>
         public ObjectResult Get(string Name)
         {
+            var token = HttpContext.Request.Headers["Authorization"];
+            if (token.Count < 1 || Check(token[0].Substring(7).TrimEnd(';')))
+                return StatusCode(401, "Bad token");
             _logger.LogInformation($"Get book with name: {Name}");
             string message; 
             ObjectResult result;
@@ -102,6 +108,9 @@ namespace BookService.Controllers
         [ProducesResponseType(200)]
         public ObjectResult Post([FromBody]Book book)
         {
+            var token = HttpContext.Request.Headers["Authorization"];
+            if (token.Count < 1 || Check(token[0].Substring(7).TrimEnd(';')))
+                return StatusCode(401, "Bad token");
             _logger.LogInformation($"Add book: {book.Name}, {book.Year}, {book.Author}");
             string message; 
             ObjectResult result; 
@@ -131,6 +140,9 @@ namespace BookService.Controllers
         [ProducesResponseType(200)]
         public ObjectResult Delete(string Name)
         {
+            var token = HttpContext.Request.Headers["Authorization"];
+            if (token.Count < 1 || Check(token[0].Substring(7).TrimEnd(';')))
+                return StatusCode(401, "Bad token");
             _logger.LogInformation($"Delete book with id: {Name}");
             string message; 
             ObjectResult result;
@@ -170,6 +182,9 @@ namespace BookService.Controllers
         // ObjectResult<IEnumerable<Book>>
         public ObjectResult GetBooksByAuthor(string Name)
         {
+            var token = HttpContext.Request.Headers["Authorization"];
+            if (token.Count < 1 || Check(token[0].Substring(7).TrimEnd(';')))
+                return StatusCode(401, "Bad token");
             _logger.LogInformation($"Get books with author: {Name}");
             string message; 
             ObjectResult result;

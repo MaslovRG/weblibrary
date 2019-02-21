@@ -1,0 +1,40 @@
+﻿@model Gateway.Models.Statistics
+
+@{
+    ViewData["Title"] = "Stats";
+}
+
+<h2>Statistics</h2>
+
+<div>
+    <hr />
+    <dl class="dl-horizontal">
+        @if (Model.AuthorCount != null)
+        {
+        <dt>
+            @Html.DisplayNameFor(model => model.AuthorCount)
+        </dt>
+        <dd>
+            @Html.DisplayFor(model => model.AuthorCount)
+        </dd>
+        }
+        @if (Model.BookCount != null)
+        {
+        <dt>
+            @Html.DisplayNameFor(model => model.BookCount)
+        </dt>
+        <dd>
+            @Html.DisplayFor(model => model.BookCount)
+        </dd>
+        }
+        @if (Model.ReaderCount != null)
+        {
+        <dt>
+            @Html.DisplayNameFor(model => model.ReaderCount)
+        </dt>
+        <dd>
+            @Html.DisplayFor(model => model.ReaderCount)
+        </dd>
+        }
+    </dl>
+</div>
