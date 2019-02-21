@@ -7,7 +7,8 @@ using Microsoft.Extensions.Logging;
 using Gateway.Services;
 using Gateway.Models.Books;
 using Gateway.Models.Authors;
-using Gateway.Models.Readers; 
+using Gateway.Models.Readers;
+using Gateway.RequestQueue; 
 using X.PagedList; 
 
 namespace Gateway.Controllers
@@ -115,25 +116,23 @@ namespace Gateway.Controllers
 
         // DELETE: book/Name
         [HttpDelete("{Name}")]
-        public async Task<ObjectResult> Delete(string Name)
+        public ObjectResult Delete(string Name)
         {
-            _logger.LogInformation($"Delete book: {Name}"); 
-            var response = await readerService.DeleteBook(Name);
-
-            if (response == null)
+            _logger.LogInformation($"Delete book: {Name}");            
+            
+            RetryQueue.UntilSuccess(async () =>
             {
-                _logger.LogInformation("Internal gateway error");
-                return StatusCode(500, "Internal error");
-            }
+                _logger.LogInformation("Try delete book (readerservice)"); 
+                return await readerService.DeleteBook(Name);
+            });
 
-            if (response.Code != 200)
+            RetryQueue.UntilSuccess(async () =>
             {
-                _logger.LogInformation("Can't delete book from readers"); 
-                return StatusCode(response.Code, response.Message);
-            }
+                _logger.LogInformation("Try delete book (bookservice)"); 
+                return await bookService.DeleteBook(Name);
+            }); 
 
-            response = await bookService.DeleteBook(Name);
-            return StatusCode(response.Code, response.Message); 
+            return Ok("Succesfully deleted"); 
         }          
 
         // GET: book/author/Name
