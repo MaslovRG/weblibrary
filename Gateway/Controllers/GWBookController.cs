@@ -86,25 +86,29 @@ namespace Gateway.Controllers
         public async Task<ObjectResult> Post([FromBody] Book book)
         {
             _logger.LogInformation("Add book");
-            Result response = null; 
-            if (book != null && book.Author != null)
+            Result response = null;
+
+            response = await bookService.AddBook(book);
+
+            if (response == null)
+                return StatusCode(503, "Service unavaliable");
+
+            if (response.Code == 200 && book != null && book.Author != null)
             {
                 response = await authorService.AddAuthor(new Author
                 {
                     Name = book.Author
                 });
+
                 if (response == null || response.Code != 200)
                 {
-                    _logger.LogInformation("Can't find or add author");
-                    book.Author = null;
+                    _logger.LogInformation("Can't find or add author. Rollback adding action");
+                    var bresponse = await bookService.DeleteBook(book.Name);
+                    if (bresponse == null || bresponse.Code != 200)
+                        return StatusCode(500, "Can't find or add author, but rollback adding is failed");
+                    return StatusCode(500, "Can't find or add author, book is not added");
                 }
-            }                
-            response = await bookService.AddBook(book);
-
-            if (response == null)
-            {
-                return StatusCode(500, "Internal error");
-            }
+            }                            
 
             return StatusCode(response.Code, response.Message); 
         }

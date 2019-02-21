@@ -156,7 +156,7 @@ namespace WebLibraryTests
             }
             return reader; 
         }
-
+        /*
         [TestMethod]
         public void Test1()
         {
@@ -471,6 +471,6 @@ namespace WebLibraryTests
             {
                 Assert.AreEqual(true, ReaderEqual(readersOutput[i], readers[i]));
             }
-        }
+        }*/
     }
 }

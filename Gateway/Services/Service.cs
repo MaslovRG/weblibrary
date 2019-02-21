@@ -123,12 +123,12 @@ namespace Gateway.Services
 
         public Result GetErrorNT()
         {
-            return new Result() { Code = 500, Message = "Can't authorized on service. Reload page" };
+            return new Result() { Code = 500, Message = "Can't authorized on service or service unavaliable. Reload page" };
         }
 
         public Result<T> GetError<T>()
         {
-            return new Result<T>() { Code = 500, Message = "Can't authorized on service. Reload page", Value = default(T) };
+            return new Result<T>() { Code = 500, Message = "Can't authorized on service or service unavaliable. Reload page", Value = default(T) };
         }
     }
 }
